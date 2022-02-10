@@ -23,7 +23,7 @@
          </sub>
        </a>
      </td>
-    <tr>
+    </tr>
  </table>
  
  ## Co - authors
