@@ -1,4 +1,4 @@
-__author__ = "Adriana Valio, Beatriz Duque"
+__author__ = "Adriana Valio, Beatriz Duque, Felipe Pereira Pinho"
 __copyright__ = "..."
 __credits__ = ["Universidade Presbiteriana Mackenzie, CRAAM"]
 __license__ = ""

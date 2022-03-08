@@ -1,4 +1,4 @@
-__author__ = "Adriana Valio, Beatriz Duque"
+__author__ = "Adriana Valio, Beatriz Duque, Felipe Pereira"
 __copyright__ = "..."
 __credits__ = ["Universidade Presbiteriana Mackenzie, CRAAM"]
 __license__ = ""
@@ -15,94 +15,9 @@ from estrela_nv1 import estrela
 from eclipse_nv1 import Eclipse
 from verify import Validar,calSemiEixo,calculaLat
 
-
-############CRIAÇÃO DA ESTRELA#############
-
-
-'''
-No main, as funções estrela e eclipse sao chamadas. 
-Primeiramente a estrela é criada, enquanto o usuário adiciona os parâmetros que desejar
-como por exemplo, manchas, flares, fáculas, etc.
-Após a conclusão dessa etapa, o usuário deve adicionar parâmetros do planeta
-em relação a estrela para que assim seja plotada a curva de luz característica deste.
-
-importações 
-verify:função criada para validar entradas, por exemplo numeros nao float/int ou negativos
-estrela: classe Estrela que possui como objetos manchas, faculas e flares
-eclipse: classe eclipse que recebe estrela e calcula sua curva de luz 
-'''
-
-print('''\033[1;36m
-╔═════════════»»» ESTRELA EXEMPLO «««════════════╗
-║-RAIO EM PIXEL: 373                             ║      
-║-INTENSIDADE DO CENTRO DA ESTRELA: 240          ║
-║ COEFICIENTE DE ESCURECIMENTO DE LIMBO          ║
-║-u1: 0.5                                        ║
-║-u2: 0.3                                        ║
-╚════════════════════════════════════════════════╝\033[m\n\n''')
-
-#default
-#raio da estrela em pixels
-raio = 373.
-#intensidade do centro da estrela (ou intensidade máxima)
-intensidadeMaxima=240.
-#iniciando a coleta de dados dos parametros da estrela
-error=-1
-while error==-1:
-    try:
-        x=int(input('1. Plotar a estrela exemplo|2. Adicionar parâmetros a estrela:'))
-        if x==1:
-            raioStar=1.
-            raioSun=1
-        #parametros dos coeficientes de escurecimento de limbo
-            coeficienteHum = 0.5
-            coeficienteDois = 0.3
-        elif x==2:
-            raioSun= Validar('Raio da estrela (em relação ao raio do sol):')
-            raioStar=raioSun*696340 #multiplicando pelo raio solar em Km 
-            coeficienteHum = float(input('Coeficiente de escurecimento de limbo 1 (u1):'))
-            coeficienteDois = float(input('Coeficiente de escurecimento de limbo 2 (u2):'))
-
-        #fazer um if de config recomendada
-        x=int(input('Tamanho da matriz definido como 856, deseja alterar? 1.Sim 2.Não :'))
-        if x== 1:
-            tamanhoMatriz=int(input('Digite o tamanho da Matriz:'))
-        elif x==2:
-            tamanhoMatriz = 856
-        # Construcao da estrela com escurecimento de limbo 
-        #Criação do objeto estrela dentro de estrela.
-        error=0 #se passar de todas as etapas, erro=0 e sai do laço
-    except Exception as erro:
-        print(f'\033[0;31mO valor digitado é inválido. Por favor, digite novamente. O tipo de problema encontrado foi{erro.__class__}\n\n\033[m') #retorna o tipo de erro
-
-
-error=-1 #trata o erro
-#ESTRELA
-while error==-1: #enquanto o erro for -1, o while irá rodar, ou seja, o usuario terá que refazer o processo se estiver apresentando algum erro
-    #se passar por todos os inputs sem erro, a função retornará 0, e assim, sairá do laço e passará para a próxima etapa
-    try:
-        estrela_ = estrela(raio,raioSun,intensidadeMaxima,coeficienteHum,coeficienteDois,tamanhoMatriz)
-        estrela = estrela_.getEstrela()
-        estrela_.Plotar(tamanhoMatriz,estrela)
-        error=estrela_.getError() #se não houver nenhum erro, ele receberá 0, o que o fará sair do laço.
-    except Exception as erro:
-        print(f'\033[0;31mO valor digitado é inválido. Por favor, digite novamente. O tipo de problema encontrado foi{erro.__class__}\n\n\033[m') #retorna o tipo de erro
-
-
-#CHAMADA DE VARIÁVEIS NECESSÁRIAS PARA O CÁLCULO DA CURVA DE LUZ 
-Nx= estrela_.getNx() #Nx e Ny necessarios para a plotagem do eclipse
-Ny= estrela_.getNy()
-raioEstrelaPixel = estrela_.getRaioStar()
-estrelaManchada = estrela_.getEstrela() #retorna na verdade a estrela sem manchas para plotar no final
-#atribuição de variáveis dadas pelos parâmetros para que sejam plotadas.
-
-
-#instanciando o ECLIPSE 
-eclipse= Eclipse(Nx,Ny,raioEstrelaPixel,estrelaManchada) #instancia o Eclipse 
-
-##################### Main que proporciona a criação de mais de um planeta, cada um com sua lua #####################
+# funcao para criar planetas - luas - manchas
 def criandoPlanetas(estrela_,planetas,qtd):
-
+    
     '''
     Função utilizada para a adição de mais de um planeta que orbita a estrela. Essa função
     roda dentro de um while de acordo com a quantidade de planetas desejada pelo usuario
@@ -138,7 +53,11 @@ def criandoPlanetas(estrela_,planetas,qtd):
         semiEixoRaioStar = 15   # em unidades de Rstar
         anguloInclinacao = 88.  # em graus
         raioPlanetaRstar = 0.1   # em unidades de Rstar      
-                
+        semiEixoUA = 1   
+        raioPlanJup = 1
+        anom = 0
+        ecc = 0
+        
     elif x==2:
         aux= True
         while aux == True:
@@ -285,8 +204,94 @@ def criandoPlanetas(estrela_,planetas,qtd):
         pyplot.plot(tempoHoras,curvaLuz)
         pyplot.axis([-tempoTransito/2,tempoTransito/2,min(curvaLuz)-0.001,1.001])                       
         pyplot.show()
+        
+    return 
 
-#############################################################################################################
+############ INICIO DO PROGRAMA #############
+
+
+'''
+No main, as funções estrela e eclipse sao chamadas. 
+Primeiramente a estrela é criada, enquanto o usuário adiciona os parâmetros que desejar
+como por exemplo, manchas, flares, fáculas, etc.
+Após a conclusão dessa etapa, o usuário deve adicionar parâmetros do planeta
+em relação a estrela para que assim seja plotada a curva de luz característica deste.
+
+importações 
+verify:função criada para validar entradas, por exemplo numeros nao float/int ou negativos
+estrela: classe Estrela que possui como objetos manchas, faculas e flares
+eclipse: classe eclipse que recebe estrela e calcula sua curva de luz 
+'''
+
+print('''\033[1;36m
+╔═════════════»»» ESTRELA EXEMPLO «««════════════╗
+║-RAIO EM PIXEL: 373                             ║      
+║-INTENSIDADE DO CENTRO DA ESTRELA: 240          ║
+║ COEFICIENTE DE ESCURECIMENTO DE LIMBO          ║
+║-u1: 0.5                                        ║
+║-u2: 0.3                                        ║
+╚════════════════════════════════════════════════╝\033[m\n\n''')
+
+#default
+#raio da estrela em pixels
+raio = 373.
+#intensidade do centro da estrela (ou intensidade máxima)
+intensidadeMaxima=240.
+#iniciando a coleta de dados dos parametros da estrela
+error=-1
+while error==-1:
+    try:
+        x=int(input('1. Plotar a estrela exemplo|2. Adicionar parâmetros a estrela:'))
+        if x==1:
+            raioStar=1.
+            raioSun=1
+        #parametros dos coeficientes de escurecimento de limbo
+            coeficienteHum = 0.5
+            coeficienteDois = 0.3
+        elif x==2:
+            raioSun= Validar('Raio da estrela (em relação ao raio do sol):')
+            raioStar=raioSun*696340 #multiplicando pelo raio solar em Km 
+            coeficienteHum = float(input('Coeficiente de escurecimento de limbo 1 (u1):'))
+            coeficienteDois = float(input('Coeficiente de escurecimento de limbo 2 (u2):'))
+
+        #fazer um if de config recomendada
+        x=int(input('Tamanho da matriz definido como 856, deseja alterar? 1.Sim 2.Não :'))
+        if x== 1:
+            tamanhoMatriz=int(input('Digite o tamanho da Matriz:'))
+        elif x==2:
+            tamanhoMatriz = 856
+        # Construcao da estrela com escurecimento de limbo 
+        #Criação do objeto estrela dentro de estrela.
+        error=0 #se passar de todas as etapas, erro=0 e sai do laço
+    except Exception as erro:
+        print(f'\033[0;31mO valor digitado é inválido. Por favor, digite novamente. O tipo de problema encontrado foi{erro.__class__}\n\n\033[m') #retorna o tipo de erro
+
+
+error=-1 #trata o erro
+#ESTRELA
+while error==-1: #enquanto o erro for -1, o while irá rodar, ou seja, o usuario terá que refazer o processo se estiver apresentando algum erro
+    #se passar por todos os inputs sem erro, a função retornará 0, e assim, sairá do laço e passará para a próxima etapa
+    try:
+        estrela_ = estrela(raio,raioSun,intensidadeMaxima,coeficienteHum,coeficienteDois,tamanhoMatriz)
+        estrela = estrela_.getEstrela()
+        estrela_.Plotar(tamanhoMatriz,estrela)
+        error=estrela_.getError() #se não houver nenhum erro, ele receberá 0, o que o fará sair do laço.
+    except Exception as erro:
+        print(f'\033[0;31mO valor digitado é inválido. Por favor, digite novamente. O tipo de problema encontrado foi{erro.__class__}\n\n\033[m') #retorna o tipo de erro
+
+
+#CHAMADA DE VARIÁVEIS NECESSÁRIAS PARA O CÁLCULO DA CURVA DE LUZ 
+Nx= estrela_.getNx() #Nx e Ny necessarios para a plotagem do eclipse
+Ny= estrela_.getNy()
+raioEstrelaPixel = estrela_.getRaioStar()
+estrelaManchada = estrela_.getEstrela() #retorna na verdade a estrela sem manchas para plotar no final
+#atribuição de variáveis dadas pelos parâmetros para que sejam plotadas.
+
+
+#instanciando o ECLIPSE 
+eclipse= Eclipse(Nx,Ny,raioEstrelaPixel,estrelaManchada) #instancia o Eclipse 
+
+##################### Main que proporciona a criação de mais de um planeta, cada um com sua lua #####################
 #cria objeto do grafico
 #passa pra main esse objeto 
 planetas = Validar("Digite a quantidade de planeta(s) desejado(s): ")
