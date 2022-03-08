@@ -1,4 +1,4 @@
-__author__ = "Adriana Valio, Beatriz Duque"
+__author__ = "Felipe Pinho, Beatriz Duque"
 __copyright__ = "https://radvel.readthedocs.io/en/latest/_modules/radvel/kepler.html#kepler"
 __credits__ = ["Universidade Presbiteriana Mackenzie, CRAAM"]
 __license__ = ""

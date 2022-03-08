@@ -1,3 +1,9 @@
+__author__ = "Beatriz Duque, Felipe Pereira Pinho"
+
+'''
+Arquivo com funções auxiliares de cálculo e validação utilizadas no modelo de eclipse
+'''
+
 import numpy as np
 #import emcee
 #from model import Modelo,Tratamento,Ajuste
