@@ -1,7 +1,7 @@
 import numpy as np
 from matplotlib import pyplot
-from estrela_nv1 import estrela
-from eclipse_nv1 import Eclipse
+from estrela import Estrela
+from eclipse import Eclipse
 #from model import Modelo
 from verify import Validar,calSemiEixo,calculaLat
 
@@ -53,7 +53,7 @@ coeficienteDois=0.28
 
 
 #cria estrela
-estrela_ = estrela(raio,raioSun,intensidadeMaxima,coeficienteHum,coeficienteDois,tamanhoMatriz)
+estrela_ = Estrela(raio,raioSun,intensidadeMaxima,coeficienteHum,coeficienteDois,tamanhoMatriz)
 
 Nx= estrela_.getNx() #Nx e Ny necessarios para a plotagem do eclipse
 Ny= estrela_.getNy()
