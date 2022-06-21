@@ -1,0 +1,13 @@
+corner==2.2.1
+emcee==3.1.2
+ipython==8.4.0
+kepler==0.0.1
+lightkurve==2.2.1
+lmfit==1.0.3
+matplotlib==3.5.2
+numpy==1.22.1
+pandas==1.4.0
+PyAstronomy==0.17.1
+pytz==2022.1
+requests==2.27.1
+scipy==1.8.0

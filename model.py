@@ -554,7 +554,7 @@ class Ajuste:
     #--------------------------------------------------#
     def lnprior(self, theta):
         u1, u2, semiEixoUA, anguloInclinacao, rp = theta
-        if 0.0 < u1 < 1.0 and 0.0 < u2 < 1.0 and 0.001 < semiEixoUA < 1 and 80. < anguloInclinacao < 90 and 0.1 < rp < 10:
+        if 0.0 < u1 < 1.0 and 0.0 < u2 < 1.0 and 0.001 < semiEixoUA < 1 and 80. < anguloInclinacao < 90 and 0.01 < rp < 5:
             return 0.0
         return -numpy.inf
     #--------------------------------------------------#
@@ -575,15 +575,4 @@ class Ajuste:
         self.pos, self.prob, self.state = self.sampler.run_mcmc(self.p0, self.niter, progress=True)
 
         return self.sampler, self.pos, self.prob, self.state
-    #--------------------------------------------------#    
-    def sample_walkers(self, nsamples, flattened_chain):
-        models = []
-        draw = numpy.floor(numpy.random.uniform(0,len(flattened_chain),size=nsamples)).astype(int)
-        thetas = flattened_chain[draw]
-        for i in thetas:
-            mod = eclipse_mcmc(time, i)
-            models.append(mod)
-        spread = numpy.std(models,axis=0)
-        med_model = numpy.median(models,axis=0)
-        return med_model,spread
     #--------------------------------------------------#
