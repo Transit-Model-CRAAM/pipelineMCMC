@@ -70,7 +70,7 @@ raioPlanetaRstar = (raioPlanJup*69911)/raioStar #multiplicando pelo raio de jupi
 dec=int(input("Deseja calular o semieixo Orbital do planeta através da 3a LEI DE KEPLER? 1. Sim 2.Não |"))
 if dec==1:
     mass=0. #colocar massa da estrela em relação a massa do sol
-    semieixoorbital = calSemiEixo(mass,periodo)
+    semieixoorbital = calSemiEixo(periodo,mass)
     semiEixoRaioStar = ((semieixoorbital/1000)/raioStar)
     #transforma em km para fazer em relação ao raio da estrela
 else:

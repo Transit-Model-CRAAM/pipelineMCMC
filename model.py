@@ -99,7 +99,7 @@ class Modelo:
         '''
     ##--------------------------------------------------------------------------------------------------------------------------------------------------##
     # utiiza-se o PDCSAP_FLUX porque será realizado a análise no trânsito.
-        lc = search_lightcurvefile(self.star_name, cadence = self.cadence).download_all().PDCSAP_FLUX
+        lc = search_lightcurvefile(self.star_name, cadence = self.cadence).download_all().SAP_FLUX
         time = [] # time = array com os dados de tempo
         flux = [] # flux = array com os dados de fluxo
         flux_err = [] # flux_err = array com os dados de erro do fluxo
