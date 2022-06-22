@@ -3,7 +3,6 @@ import math
 
 
 ############ adição de luas ###########
-
 class Moon:
     '''
     Classe Moon (lua), criada de acordo com a adição de planetas.
