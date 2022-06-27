@@ -31,7 +31,7 @@ import sys
 import platform
 
 
-class estrela:
+class Estrela:
     '''
     A classe estrela recebe como objeto o raio, intensidade maxima, coeficientes de escurecimento de limbo.
     A estrela é formata em uma matriz de tamanho defeault 856.
