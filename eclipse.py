@@ -240,11 +240,11 @@ class Eclipse:
 
         # Prepara os tipos de cada variável dos argumentos e do retorno da função do calculo da curva de luz
         my_func.curvaLuz.restype = c_double
-        my_func.curvaLuz.argtypes = c_double,c_double,c_int,c_int,POINTER(c_double),POINTER(c_double),c_double
+        my_func.curvaLuz.argtypes = c_double,c_double,c_int,c_double,POINTER(c_double),POINTER(c_double),c_double
         my_func.curvaLuzLua.restype = c_double
-        my_func.curvaLuzLua.argtypes = c_double,c_double,c_double,c_double,c_double,c_int,c_int,POINTER(c_double),POINTER(c_double),c_double
+        my_func.curvaLuzLua.argtypes = c_double,c_double,c_double,c_double,c_double,c_int,c_double,POINTER(c_double),POINTER(c_double),c_double
 
-        raioPlanetaPixel = int(raioPlanetaPixel)
+        raioPlanetaPixel = float(raioPlanetaPixel)
 
         '''
         Criação da matriz para plotagem:
