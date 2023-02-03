@@ -37,8 +37,8 @@ import timeit
 from IPython.display import display, Math
 from IPython.display import display, Math
 
-from estrela_nv1 import estrela #estrela e eclipse:: extensões de programas auxiliares que realizam o cálculo da curva de luz.
-from eclipse_nv1 import Eclipse
+from estrela import Estrela #estrela e eclipse:: extensões de programas auxiliares que realizam o cálculo da curva de luz.
+from eclipse import Eclipse
 from verify import Validar, calSemiEixo, converte
 
 import numpy
@@ -294,7 +294,7 @@ class Modelo:
         parâmetro ts_model :: tempo do trânsito em Horas
         
         '''
-        estrela_1 = estrela(self.r,self.r_Sun, self.mx , self.u1, self.u2, self.n)  #cria o objeto estrela 
+        estrela_1 = Estrela(self.r,self.r_Sun, self.mx , self.u1, self.u2, self.n)  #cria o objeto estrela 
         Nx1 = estrela_1.getNx() #coleta parametros da matriz estrela 
         Ny1 = estrela_1.getNy()
         raioEstrelaPixel1 = estrela_1.getRaioStar() #coleta raio da estrela em pixel 
@@ -536,7 +536,7 @@ class Ajuste:
         periodo = 1.
         raioStar, raioPlanetaRstar, semiEixoRaioStar = converte(rsun,raioPlanJup,semiEixoUA)
         
-        estrela_ = estrela(373, raioStar, 240., u1, u2, 856)
+        estrela_ = Estrela(373, raioStar, 240., u1, u2, 856)
         Nx = estrela_.getNx()
         Ny = estrela_.getNy()
         raioEstrelaPixel = estrela_.getRaioStar()

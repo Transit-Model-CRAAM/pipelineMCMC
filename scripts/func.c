@@ -36,7 +36,7 @@ int* criaEstrela(int lin, int col, int tamanhoMatriz, float raio, float intensid
 	return estrela;
 }
 
-double curvaLuz(double x0, double y0, int tamanhoMatriz, int raioPlanetaPixel, double *estrelaManchada, double *kk, double maxCurvaLuz){
+double curvaLuz(double x0, double y0, int tamanhoMatriz, double raioPlanetaPixel, double *estrelaManchada, double *kk, double maxCurvaLuz){
 	double valor = 0;
 	int i;
 	
@@ -55,7 +55,7 @@ double curvaLuz(double x0, double y0, int tamanhoMatriz, int raioPlanetaPixel, d
 	return valor;
 }
 
-double curvaLuzLua(double x0, double y0, double xm, double ym, double rMoon, int tamanhoMatriz, int raioPlanetaPixel, double *estrelaManchada, double *kk, double maxCurvaLuz){
+double curvaLuzLua(double x0, double y0, double xm, double ym, double rMoon, int tamanhoMatriz, double raioPlanetaPixel, double *estrelaManchada, double *kk, double maxCurvaLuz){
 	double valor = 0;
 	int i;
 	
