@@ -18,11 +18,11 @@ With Python installed in your machine, open the command prompt (cmd) and type th
 *** 
 ## How to install 
 
-[ 🇧🇷 ] Para instalar todas as bibliotecas de uma vez, abra o cmd dentro da pasta onde os arquivos foram extraídos e digite o comando ``` pip install -r requirements.txt ```.
+[ 🇧🇷 ] Para instalar todas as bibliotecas de uma vez, abra o cmd dentro da pasta onde os arquivos foram extraídos e digite o comando ``` pip install -r requirements.txt --user ```.
 
 Caso a instalação dê algum problema, também é possível instalar individualmente cada biblioteca através dos comandos abaixo.
 
-[ 🇺🇸 ] To install all libraries at once, open cmd inside the folder where files were extracted and type in the command ``` pip install -r requirements.txt ```.
+[ 🇺🇸 ] To install all libraries at once, open cmd inside the folder where files were extracted and type in the command ``` pip install -r requirements.txt --user ```.
 
 In case the installation goes wrong, it's also possible to install each library individually using the commands below.
 

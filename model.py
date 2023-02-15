@@ -37,8 +37,8 @@ import timeit
 from IPython.display import display, Math
 from IPython.display import display, Math
 
-from estrela_nv1 import estrela #estrela e eclipse:: extensões de programas auxiliares que realizam o cálculo da curva de luz.
-from eclipse_nv1 import Eclipse
+from estrela import Estrela #estrela e eclipse:: extensões de programas auxiliares que realizam o cálculo da curva de luz.
+from eclipse import Eclipse
 from verify import Validar, calSemiEixo, converte
 
 import numpy
@@ -47,7 +47,7 @@ from matplotlib import pyplot
 import matplotlib.pyplot as plt
 
 import lightkurve as lk
-from lightkurve import search_lightcurvefile
+from lightkurve import search_lightcurve
 
 
 class Modelo:
@@ -99,7 +99,7 @@ class Modelo:
         '''
     ##--------------------------------------------------------------------------------------------------------------------------------------------------##
     # utiiza-se o PDCSAP_FLUX porque será realizado a análise no trânsito.
-        lc = search_lightcurvefile(self.star_name, cadence = self.cadence).download_all().SAP_FLUX
+        lc = search_lightcurve(self.star_name, cadence = self.cadence).download_all()
         time = [] # time = array com os dados de tempo
         flux = [] # flux = array com os dados de fluxo
         flux_err = [] # flux_err = array com os dados de erro do fluxo
@@ -108,11 +108,14 @@ class Modelo:
         flux_err_temp = []
 
         for i in range(0, len(lc)-1):
-            flux_temp.append(lc[i].flux)
-            flux_err_temp.append(lc[i].flux_err)
-            time_temp.append(lc[i].time.to_value('bkjd','float'))
+            try:
+                flux_temp.append(lc[i].sap_flux)
+                flux_err_temp.append(lc[i].sap_flux_err)
+                time_temp.append(lc[i].time.to_value('bkjd','float'))
+            except:
+                pass
 
-        for i in range(0, len(lc)-1):   
+        for i in range(0, len(flux_temp)-1):   
             
     # Limita os índices aos valores de tempo lidos
             flux_temp[i] = flux_temp[i][0:time_temp[i].size]
@@ -127,7 +130,7 @@ class Modelo:
             flux_err_temp[i] = flux_err_temp[i]/ abs(numpy.median(flux_temp[i]))
             flux_temp[i] = flux_temp[i]/ abs(numpy.median(flux_temp[i]))
 
-        for i in range(0, len(lc)-1):
+        for i in range(0, len(flux_temp)-1):
             flux = numpy.append(flux, flux_temp[i])
             time = numpy.append(time, time_temp[i])
             flux_err = numpy.append(flux_err,flux_err_temp[i])
@@ -294,7 +297,7 @@ class Modelo:
         parâmetro ts_model :: tempo do trânsito em Horas
         
         '''
-        estrela_1 = estrela(self.r,self.r_Sun, self.mx , self.u1, self.u2, self.n)  #cria o objeto estrela 
+        estrela_1 = Estrela(self.r,self.r_Sun, self.mx , self.u1, self.u2, self.n)  #cria o objeto estrela 
         Nx1 = estrela_1.getNx() #coleta parametros da matriz estrela 
         Ny1 = estrela_1.getNy()
         raioEstrelaPixel1 = estrela_1.getRaioStar() #coleta raio da estrela em pixel 
@@ -536,7 +539,7 @@ class Ajuste:
         periodo = 1.
         raioStar, raioPlanetaRstar, semiEixoRaioStar = converte(rsun,raioPlanJup,semiEixoUA)
         
-        estrela_ = estrela(373, raioStar, 240., u1, u2, 856)
+        estrela_ = Estrela(373, raioStar, 240., u1, u2, 856)
         Nx = estrela_.getNx()
         Ny = estrela_.getNy()
         raioEstrelaPixel = estrela_.getRaioStar()
