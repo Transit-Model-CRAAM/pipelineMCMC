@@ -60,11 +60,16 @@ class Estrela:
         error=0
         
         #start = time.time()
-        # Verifica se o Python é 32 ou 64 bit
-        if(platform.architecture()[0] == "32bit"):
-            my_func = WinDLL('scripts/func32.dll', winmode = 0x8)
-        elif(platform.architecture()[0] == "64bit"):
-            my_func = WinDLL('scripts/func64.dll', winmode = 0x8)
+        # Verifica o SO e se o Python é 32 ou 64 bit
+        if(platform.system() == "Windows"):
+            if(platform.architecture()[0] == "32bit"):
+                my_func = WinDLL('scripts/func32.dll', winmode = 0x8)
+            elif(platform.architecture()[0] == "64bit"):
+                my_func = WinDLL('scripts/func64.dll', winmode = 0x8)
+        elif(platform.system() == "Darwin"):
+            my_func = cdll.LoadLibrary('scripts/func64.dylib')
+        else:
+            my_func = CDLL('scripts/func64.so')
 
         my_func.criaEstrela.restype = ndpointer(dtype=c_int, ndim=2, shape=(self.tamanhoMatriz,self.tamanhoMatriz))
         self.estrela = my_func.criaEstrela(self.tamanhoMatriz,self.tamanhoMatriz,self.tamanhoMatriz,c_float(self.raio),c_float(self.intensidadeMaxima),c_float(self.coeficienteHum),c_float(self.coeficienteDois))
