@@ -67,20 +67,22 @@ raioPlanJup = 0.0819 #em relação ao raio de jupiter
 raioPlanetaRstar = (raioPlanJup*69911)/raioStar #multiplicando pelo raio de jupiter em km 
 
 
-dec=int(input("Deseja calular o semieixo Orbital do planeta através da 3a LEI DE KEPLER? 1. Sim 2.Não |"))
+dec=int(input("Deseja calular o semieixo Orbital do planeta através da 3a LEI DE KEPLER? 1. Sim 2.Não | "))
 if dec==1:
     mass=0. #colocar massa da estrela em relação a massa do sol
     semieixoorbital = calSemiEixo(periodo,mass)
     semiEixoRaioStar = ((semieixoorbital/1000)/raioStar)
     #transforma em km para fazer em relação ao raio da estrela
 else:
-    semiEixoUA = Validar('Semi eixo (em UA:)')
+    #semiEixoUA = Validar('Semi eixo (em UA:)') #descomentar essa linha caso queira adicionar o valor em runtime
+    semiEixoUA = 0.028 # Adicionar apenas valores maiores que 0 
+
     # em unidades de Rstar
     semiEixoRaioStar = ((1.469*(10**8))*semiEixoUA)/raioStar
     #multiplicando pelas UA (transformando em Km) e convertendo em relacao ao raio da estrela 
 
 latsugerida = calculaLat(semiEixoRaioStar,anguloInclinacao)
-print("A latitude sugerida para que a mancha influencie na curva de luz da estrela é:", latsugerida)
+print("A latitude sugerida para que a mancha influencie na curva de luz da estrela é: ", latsugerida)
 
 #manchas
 count = 0

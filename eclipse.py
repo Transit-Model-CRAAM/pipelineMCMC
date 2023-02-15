@@ -28,7 +28,7 @@ from moon import Moon
 from verify import Validar
 #from keplerAux import keplerfunc  #biblioteca auxiliar caso a biblioteca kepler nao funcione
 import matplotlib.animation as animation
-import kepler #para o calculo de orbitas excentricas (pip install kepler)
+from kepler._core import solve #para o calculo de orbitas excentricas (pip install kepler)
 import os
 from ctypes import *
 from numpy.ctypeslib import ndpointer
@@ -61,9 +61,9 @@ class Eclipse:
         '''
         Função chamada na Main para o cálculo do tempo de Trânsito em Horas
         '''
-        x=int(input("Intervalo de tempo=1. Deseja alterar? 1. SIM | 2. NÃO:"))
+        x=int(input("Intervalo de tempo=1. Deseja alterar? 1. SIM | 2. NÃO: "))
         if x ==1:
-            self.intervaloTempo=float(input('Digite o intervalo de tempo em minutos:'))
+            self.intervaloTempo=float(input('Digite o intervalo de tempo em minutos: '))
         elif x==2:
             self.intervaloTempo = 1.   # em minutos
 
@@ -151,7 +151,8 @@ class Eclipse:
         m = nk*(self.tempoHoras-Tp)     # em radianos
 
         # calculando a anomalia excentrica em radianos
-        eccanom = kepler.solve(m,ecc)  # subrotina em anexo
+        
+        eccanom = solve(m,ecc)  # subrotina em anexo
         xs=semiEixoPixel*(np.cos(eccanom)-ecc)
         ys=semiEixoPixel*(math.sqrt(1-(ecc**2))*np.sin(eccanom))
 
