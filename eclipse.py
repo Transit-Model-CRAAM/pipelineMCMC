@@ -61,7 +61,7 @@ class Eclipse:
         '''
         Função chamada na Main para o cálculo do tempo de Trânsito em Horas
         '''
-        x=int(input("Intervalo de tempo=1. Deseja alterar? 1. SIM | 2. NÃO: "))
+        x=int(input("Intervalo de tempo=1. Deseja alterar? 1.Sim | 2.Não: "))
         if x ==1:
             self.intervaloTempo=float(input('Digite o intervalo de tempo em minutos: '))
         elif x==2:
@@ -266,6 +266,11 @@ class Eclipse:
             #Inicio dos loops para a plotagem e calculo do trânsito
             #start = time.time()
             intervalo = math.ceil(len(rangeloop)/400)
+
+            kkTamanhoMatriz = kk/tamanhoMatriz
+            npFixKkTamanhoMatriz = kk-tamanhoMatriz*np.fix(kkTamanhoMatriz)
+            raioPlanetaPixelSqr = raioPlanetaPixel**2
+            tamanhoMatrizSqr = tamanhoMatriz**2
             if (lua == False):
                 for i in range(0,len(rangeloop)):
 
@@ -275,8 +280,8 @@ class Eclipse:
                                 self.curvaLuz[rangeloop[i]]=my_func.curvaLuz(x0,y0,self.tamanhoMatriz,raioPlanetaPixel,em,kk2,maxCurvaLuz)
 
                                 if(plota and self.curvaLuz[rangeloop[i]] != 1 and numAux<200):
-                                    plan = np.zeros(tamanhoMatriz*tamanhoMatriz)+1.
-                                    ii = np.where(((kk/tamanhoMatriz-y0)**2+(kk-tamanhoMatriz*np.fix(kk/tamanhoMatriz)-x0)**2 <= raioPlanetaPixel**2))
+                                    plan = np.zeros(tamanhoMatrizSqr)+1.
+                                    ii = np.where(((kkTamanhoMatriz-y0)**2+(npFixKkTamanhoMatriz-x0)**2 <= raioPlanetaPixel**2))
                                     plan[ii]=0.
                                     plan = plan.reshape(self.tamanhoMatriz, self.tamanhoMatriz) #posicao adicionada na matriz
                                     plt.axis([0,self.Nx,0,self.Ny])
@@ -285,6 +290,7 @@ class Eclipse:
                                     numAux+=1
                                 plota = not(plota) #variavel auxiliar que seleciona o intervalo correto para plotagem
             else:
+                rMoonSqr = self.Rmoon**2
                 for i in range(0,len(rangeloop)):
 
                                 x0 = xplan[i] 
@@ -297,9 +303,9 @@ class Eclipse:
                                 self.curvaLuz[rangeloop[i]]=my_func.curvaLuzLua(x0,y0,xm,ym,self.Rmoon,self.tamanhoMatriz,raioPlanetaPixel,em,kk2,maxCurvaLuz)
 
                                 if(plota and self.curvaLuz[rangeloop[i]] != 1 and numAux<200):
-                                    plan = np.zeros(tamanhoMatriz*tamanhoMatriz)+1.
-                                    ii = np.where(((kk/tamanhoMatriz-y0)**2+(kk-tamanhoMatriz*np.fix(kk/tamanhoMatriz)-x0)**2 <= raioPlanetaPixel**2))
-                                    ll = np.where((kk/tamanhoMatriz-ym)**2+(kk-tamanhoMatriz*np.fix(kk/tamanhoMatriz)-xm)**2 <= self.Rmoon**2)
+                                    plan = np.zeros(tamanhoMatrizSqr)+1.
+                                    ii = np.where(((kkTamanhoMatriz-y0)**2+(npFixKkTamanhoMatriz-x0)**2 <= raioPlanetaPixelSqr))
+                                    ll = np.where((kkTamanhoMatriz-ym)**2+(npFixKkTamanhoMatriz-xm)**2 <= rMoonSqr)
                                     plan[ii]=0.
                                     plan[ll]=0.
                                     plan = plan.reshape(self.tamanhoMatriz, self.tamanhoMatriz) #posicao adicionada na matriz
