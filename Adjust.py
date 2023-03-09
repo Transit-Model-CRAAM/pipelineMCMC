@@ -131,6 +131,10 @@ class AjusteManchado:
         Nx = estrela_.getNx()
         Ny = estrela_.getNy()
         raioEstrelaPixel = estrela_.getRaioStar()
+         
+        # estrela=estrela_.manchas(r,intensidadeMancha,lat,longt) #recebe a escolha de se irá receber manchas ou não
+        # count+=1
+        
         estrelaManchada = estrela_.getEstrela()
         
         eclipse = Eclipse(Nx,Ny,raioEstrelaPixel,estrelaManchada)
@@ -144,7 +148,6 @@ class AjusteManchado:
         return -0.5 * numpy.sum(((flux - self.eclipse_mcmc(time, theta))/flux_err) ** 2)
     #--------------------------------------------------#
     def lnprior(self, theta):
-        u1, u2, semiEixoUA, anguloInclinacao, rp = theta
         lat, long, raioRstar, intensidade = theta 
         if (0.0 < lat) and (0.0 < long) and (0.0 < raioRstar < 0.5) and (0.0 < intensidade <= 1):
             return 0.0
