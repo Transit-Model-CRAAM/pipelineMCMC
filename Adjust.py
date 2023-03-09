@@ -103,11 +103,19 @@ class AjusteManchado:
         self.burnin = burnin
 
 
-        self.initial = numpy.array([self.u1_p0, self.u2_p0, self.a_p0, self.inc_p0, self.rp_p0])
+        self.initial = numpy.array([])
+
+        # limitacao do numero de manchas
+        if(ndim > 4):
+            ndim = 4
+        elif(ndim < 1):
+            ndim = 1
+            
+        for i in range(ndim):
+            self.initial = numpy.append(self.initial, [self.long[i], self.lat[i], self.raioRStar[i], self.intensidade[i]])
+            
         self.ndim = len(self.initial)
-
         self.p0 = [numpy.array(self.initial) + 1e-4 * numpy.random.randn(self.ndim) for i in range(self.nwalkers)]
-
         self.tratamento = tratamento
 
     #--------------------------------------------------#
