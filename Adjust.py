@@ -84,13 +84,19 @@ class Ajuste:
     #--------------------------------------------------#
 
 class AjusteManchado: 
-    def __init__(self,tratamento, time, flux, nwalkers, niter, burnin, ndim):
+    def __init__(self,tratamento, time, flux, nwalkers, niter, burnin, ndim, u1, u2, semiEixoUA, anguloInclinacao, raioPlanJup):
         
         # parametros das 4 manchas (limite) 
         self.lat = [0, 0, 0, 0]
         self.long = [0, 0, 0, 0] 
         self.raioRStar = [0, 0, 0, 0]  # em relacao ao raio da estrela 
         self.intensidade = [0, 0, 0, 0]  # em relacao ao raio da estrela
+
+        self.u1 = u1
+        self.u2 = u2
+        self.semiEixoUA = semiEixoUA
+        self.anguloInclinacao = anguloInclinacao
+        self.raioPlanJup = raioPlanJup
 
         self.time = time
         self.flux = flux
@@ -113,7 +119,7 @@ class AjusteManchado:
             
         for i in range(ndim):
             self.initial = numpy.append(self.initial, [self.long[i], self.lat[i], self.raioRStar[i], self.intensidade[i]])
-            
+        
         self.ndim = len(self.initial)
         self.p0 = [numpy.array(self.initial) + 1e-4 * numpy.random.randn(self.ndim) for i in range(self.nwalkers)]
         self.tratamento = tratamento
@@ -123,15 +129,23 @@ class AjusteManchado:
     #--------------------------------------------------#
     def eclipse_mcmc(self, time, theta):
         rsun = 1.
-        u1, u2, semiEixoUA, anguloInclinacao, raioPlanJup = theta
+        u1 = self.u1
+        u2 = self.u2
+        semiEixoUA = self.semiEixoUA
+        anguloInclinacao = self.anguloInclinacao
+        raioPlanJup = raioPlanJup
         periodo = 1.
-        raioStar, raioPlanetaRstar, semiEixoRaioStar = converte(rsun,raioPlanJup,semiEixoUA)
+        raioStar, raioPlanetaRstar, semiEixoRaioStar = converte(rsun,self.raioPlanJup,self.semiEixoUA)
         
         estrela_ = Estrela(373, raioStar, 240., u1, u2, 856)
         Nx = estrela_.getNx()
         Ny = estrela_.getNy()
         raioEstrelaPixel = estrela_.getRaioStar()
-         
+        
+        
+        for i in range(len(theta)//4):
+            # manchas(raioRStar, intensidade, lat, long)
+            estrela=estrela_.manchas(theta[(i*4)+2],theta[(i*4)+3],theta[(i*4)+1],theta[i*4])
         # estrela=estrela_.manchas(r,intensidadeMancha,lat,longt) #recebe a escolha de se irá receber manchas ou não
         # count+=1
         
@@ -148,10 +162,44 @@ class AjusteManchado:
         return -0.5 * numpy.sum(((flux - self.eclipse_mcmc(time, theta))/flux_err) ** 2)
     #--------------------------------------------------#
     def lnprior(self, theta):
-        lat, long, raioRstar, intensidade = theta 
-        if (0.0 < lat) and (0.0 < long) and (0.0 < raioRstar < 0.5) and (0.0 < intensidade <= 1):
-            return 0.0
-        return -numpy.inf
+        for i in range(len(theta)//4):
+            #if (0.0 < lat) and (0.0 < long) and (0.0 < raioRstar < 0.5) and (0.0 < intensidade <= 1):
+            if (0.0 < theta[i*4]) and (0.0 < theta[(i*4)+1]) and (0.0 < theta[(i*4)+2] < 0.5) and (0.0 < theta[(i*4)+3] <= 1):
+                continue
+            return -numpy.inf
+        return 0.0
+        # if(len(theta) == 4):
+        #     lat, long, raioRstar, intensidade = theta 
+        #     if (0.0 < lat) and (0.0 < long) and (0.0 < raioRstar < 0.5) and (0.0 < intensidade <= 1):
+        #         return 0.0
+        #     return -numpy.inf
+        # elif(len(theta) == 8):
+        #     lat1, long1, raioRstar1, intensidade1, lat2, long2, raioRstar2, intensidade2 = theta 
+        #     if (
+        #         (0.0 < lat1) and (0.0 < long1) and (0.0 < raioRstar1 < 0.5) and (0.0 < intensidade1 <= 1) and
+        #         (0.0 < lat2) and (0.0 < long2) and (0.0 < raioRstar2 < 0.5) and (0.0 < intensidade2 <= 1)
+        #     ):
+        #         return 0.0
+        #     return -numpy.inf
+        # elif(len(theta) == 12):
+        #     lat1, long1, raioRstar1, intensidade1, lat2, long2, raioRstar2, intensidade2, lat3, long3, raioRstar3, intensidade3 = theta 
+        #     if (
+        #         (0.0 < lat1) and (0.0 < long1) and (0.0 < raioRstar1 < 0.5) and (0.0 < intensidade1 <= 1) and
+        #         (0.0 < lat2) and (0.0 < long2) and (0.0 < raioRstar2 < 0.5) and (0.0 < intensidade2 <= 1) and
+        #         (0.0 < lat3) and (0.0 < long3) and (0.0 < raioRstar3 < 0.5) and (0.0 < intensidade3 <= 1)
+        #     ):
+        #         return 0.0
+        #     return -numpy.inf
+        # elif(len(theta) == 16):
+        #     lat1, long1, raioRstar1, intensidade1, lat2, long2, raioRstar2, intensidade2, lat3, long3, raioRstar3, intensidade3, lat4, long4, raioRstar4, intensidade4 = theta 
+        #     if (
+        #         (0.0 < lat1) and (0.0 < long1) and (0.0 < raioRstar1 < 0.5) and (0.0 < intensidade1 <= 1) and
+        #         (0.0 < lat2) and (0.0 < long2) and (0.0 < raioRstar2 < 0.5) and (0.0 < intensidade2 <= 1) and
+        #         (0.0 < lat3) and (0.0 < long3) and (0.0 < raioRstar3 < 0.5) and (0.0 < intensidade3 <= 1) and
+        #         (0.0 < lat4) and (0.0 < long4) and (0.0 < raioRstar4 < 0.5) and (0.0 < intensidade4 <= 1)
+        #     ):
+        #         return 0.0
+        #     return -numpy.inf
     #--------------------------------------------------#
     def lnprob(self, theta, time, flux, flux_err):
         lp = self.lnprior(theta)
