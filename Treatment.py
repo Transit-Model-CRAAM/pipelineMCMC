@@ -130,21 +130,22 @@ class Tratamento :
         parâmetro smoothed_LC[bb] :: curva de luz Smoothed
         '''
         
-        if selection == 0:
-            tran_selec = numpy.random.randint(int(self.nt), size=(1, ntransit))[0]
+        # if selection == 0:
+        #     tran_selec = numpy.random.randint(int(self.nt), size=(1, ntransit))[0]
         
-        else:
-            deepest_transit = []
-            for i in range(0, int(self.nt)):
-                if len(self.n_f_split[i]) > 0:
-                    deepest_transit.append(numpy.mean(self.n_f_split[i]))
-                else:
-                    deepest_transit.append(900)
-            tran_selec = numpy.argsort(deepest_transit)[0:ntransit]    
+        # else:
+        #     deepest_transit = []
+        #     for i in range(0, int(self.nt)):
+        #         if len(self.n_f_split[i]) > 0:
+        #             deepest_transit.append(numpy.mean(self.n_f_split[i]))
+        #         else:
+        #             deepest_transit.append(900)
+        #     tran_selec = numpy.argsort(deepest_transit)[0:ntransit]    
         
+        tran_selec = [selection]
+
         lc = []
         t = []
-        
         for i in tran_selec:
             lc = numpy.append(lc, self.n_f_split[i])
             t = numpy.append(t, (self.t_split[i]+self.porb*24*i)/24+self.x0)
@@ -153,7 +154,7 @@ class Tratamento :
         jj = numpy.argsort(phase)
         ff = phase[jj]
 
-        self.smoothed_LC = scipy.ndimage.filters.uniform_filter(lc[jj], size = 100) # equivalente ao smooth do idl com edge_truncade
+        self.smoothed_LC = scipy.ndimage.filters.uniform_filter(lc[jj], size = 10) # equivalente ao smooth do idl com edge_truncade
 
         x = phase[jj]
         y = 1 - self.smoothed_LC
@@ -171,5 +172,52 @@ class Tratamento :
         
         return self.time_phased[bb], self.smoothed_LC[bb]
 
-        def gettime_phased(self):
-            return self.time_phased
+    def gettime_phased(self):
+        return self.time_phased
+        
+    #--------------------------------------------------#
+
+    def transit_smooth_2(self, selection):
+    
+        '''
+        Funcao para uma curva smooth com n transitos
+        
+        parâmetro ntransit :: numero de transitos para usar na curva smoothed
+        parâmetro selection :: 0, usa uma escolha randomica de todos os transitos
+        parâmetro se selection :: 1, usa os transitos mais fundos  
+        
+        returns
+        parâmetro time_phased[bb] :: tempo 
+        parâmetro smoothed_LC[bb] :: curva de luz Smoothed
+        '''   
+
+        i = selection
+        
+        lc = []
+        t = []
+        
+        # for i in tran_selec:
+        lc = numpy.append(lc, self.n_f_split[i])
+        t = numpy.append(t, (self.t_split[i]+self.porb*24*i)/24+self.x0)
+        
+        phase = (t % self.porb)/ self.porb
+        jj = numpy.argsort(phase)
+        ff = phase[jj]
+
+        self.smoothed_LC = scipy.ndimage.filters.uniform_filter(lc[jj], size = 10) # equivalente ao smooth do idl com edge_truncade
+
+        x = phase[jj]
+        y = 1 - self.smoothed_LC
+        yh = 0.002
+
+        kk = numpy.where(y >= yh)
+
+        x1 = min(x[kk])
+        x2 = max(x[kk])
+        fa0 = (x1 + x2)/ 2 # valor central dos transitos em fase
+
+        self.time_phased = (ff - fa0)*self.porb*24
+
+        bb = numpy.where((self.time_phased >= min(self.ts_model)) & (self.time_phased <= max(self.ts_model)))
+        
+        return self.time_phased[bb], self.smoothed_LC[bb]
