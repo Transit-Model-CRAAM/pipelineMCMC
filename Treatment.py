@@ -119,7 +119,7 @@ class Tratamento :
     def transit_smooth(self,ntransit, selection):
     
         '''
-        Funcao para uma curva smooth com n transitos
+        Funcao para uma curva smooth com n transitos dado um range (selection, onde seleciona os transitos de forma randômica ou os trânsitos mais fundos)
         
         parâmetro ntransit :: numero de transitos para usar na curva smoothed
         parâmetro selection :: 0, usa uma escolha randomica de todos os transitos
@@ -130,20 +130,18 @@ class Tratamento :
         parâmetro smoothed_LC[bb] :: curva de luz Smoothed
         '''
         
-        # if selection == 0:
-        #     tran_selec = numpy.random.randint(int(self.nt), size=(1, ntransit))[0]
+        if selection == 0:
+            tran_selec = numpy.random.randint(int(self.nt), size=(1, ntransit))[0]
         
-        # else:
-        #     deepest_transit = []
-        #     for i in range(0, int(self.nt)):
-        #         if len(self.n_f_split[i]) > 0:
-        #             deepest_transit.append(numpy.mean(self.n_f_split[i]))
-        #         else:
-        #             deepest_transit.append(900)
-        #     tran_selec = numpy.argsort(deepest_transit)[0:ntransit]    
+        else:
+            deepest_transit = []
+            for i in range(0, int(self.nt)):
+                if len(self.n_f_split[i]) > 0:
+                    deepest_transit.append(numpy.mean(self.n_f_split[i]))
+                else:
+                    deepest_transit.append(900)
+            tran_selec = numpy.argsort(deepest_transit)[0:ntransit]    
         
-        tran_selec = [selection]
-
         lc = []
         t = []
         for i in tran_selec:
@@ -177,18 +175,11 @@ class Tratamento :
         
     #--------------------------------------------------#
 
-    def transit_smooth_2(self, selection):
+    def select_transit_smooth(self, selection):
     
         '''
-        Funcao para uma curva smooth com n transitos
-        
-        parâmetro ntransit :: numero de transitos para usar na curva smoothed
-        parâmetro selection :: 0, usa uma escolha randomica de todos os transitos
-        parâmetro se selection :: 1, usa os transitos mais fundos  
-        
-        returns
-        parâmetro time_phased[bb] :: tempo 
-        parâmetro smoothed_LC[bb] :: curva de luz Smoothed
+        Funcao para selecionar o transito desejado
+        selection :: número do transito selecionado
         '''   
 
         i = selection
