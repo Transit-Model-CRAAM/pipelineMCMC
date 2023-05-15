@@ -87,6 +87,7 @@ class AjusteManchado:
     def __init__(self,tratamento, time, flux, nwalkers, niter, burnin, ndim, u1, u2, semiEixoUA, anguloInclinacao, raioPlanJup):
         
         # parametros das 4 manchas (limite) 
+        # TODO: Arrumar multiplas manchas
         self.lat = [10, 0, 0, 0]
         self.long = [10, 0, 0, 0] 
         self.raioRStar = [0.1, 0, 0, 0]  # em relacao ao raio da estrela 
