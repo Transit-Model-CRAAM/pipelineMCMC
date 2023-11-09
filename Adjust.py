@@ -88,10 +88,10 @@ class AjusteManchado:
         
         # parametros das 4 manchas (limite) 
         # TODO: Arrumar multiplas manchas
-        self.lat = [10, 0, 0, 0]
-        self.long = [10, 0, 0, 0] 
-        self.raioRStar = [0.1, 0, 0, 0]  # em relacao ao raio da estrela 
-        self.intensidade = [0.5, 0, 0, 0]  # em relacao ao raio da estrela
+        self.lat = [-10, -10, 0, 0]
+        self.long = [10, 40, 0, 0] 
+        self.raioRStar = [0.1, 0.1, 0.1, 0.1]  # em relacao ao raio da estrela 
+        self.intensidade = [0.3, 0.3, 0.5, 0.5]  # em relacao ao raio da estrela
 
         self.u1 = u1
         self.u2 = u2
@@ -151,11 +151,10 @@ class AjusteManchado:
         # count+=1
         
         estrelaManchada = estrela_.getEstrela()
-        
         eclipse = Eclipse(Nx,Ny,raioEstrelaPixel,estrelaManchada)
         eclipse.setTempoHoras(1.)
         eclipse.criarEclipse(semiEixoRaioStar, semiEixoUA, raioPlanetaRstar, raioPlanJup, periodo, anguloInclinacao, 0,0 , 0, False, False)
-        lc0 = numpy.array(eclipse.getCurvaLuz()) 
+        lc0 = numpy.array(eclipse.getCurvaLuz())
         ts0 = numpy.array(eclipse.getTempoHoras()) 
         return interpolate.interp1d(ts0,lc0,fill_value="extrapolate")(time)
     #--------------------------------------------------#
@@ -165,7 +164,7 @@ class AjusteManchado:
     def lnprior(self, theta):
         for i in range(len(theta)//4):
             #if (0.0 < lat) and (0.0 < long) and (0.0 < raioRstar < 0.5) and (0.0 < intensidade <= 1):
-            if (0.0 < theta[i*4]) and (0.0 < theta[(i*4)+1]) and (0.0 < theta[(i*4)+2] < 0.5) and (0.0 < theta[(i*4)+3] <= 1):
+            if (-40 < theta[i*4]) and (-40 < theta[(i*4)+1]) and (0.0 < theta[(i*4)+2] < 0.5) and (0.0 < theta[(i*4)+3] <= 1):
                 continue
             return -numpy.inf
         return 0.0

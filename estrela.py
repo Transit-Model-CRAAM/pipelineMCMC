@@ -144,7 +144,7 @@ class Estrela:
         spot = spot.reshape([self.Ny, self.Nx])
     
         self.estrela= self.estrela * spot
-        plt.axis([0,self.Nx,0,self.Ny])
+        plt.axis([0,self.Nx,0,self.Ny])  #corrigir chamada do plot
                 
         #self.estrelaManchada= estrelaManchada
         
