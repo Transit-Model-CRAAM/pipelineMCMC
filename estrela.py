@@ -75,20 +75,20 @@ class Estrela:
         self.estrela = my_func.criaEstrela(self.tamanhoMatriz,self.tamanhoMatriz,self.tamanhoMatriz,c_float(self.raio),c_float(self.intensidadeMaxima),c_float(self.coeficienteHum),c_float(self.coeficienteDois))
 
         del my_func
-        #print(self.estrela)
 
         self.error=error
         self.Nx = self.tamanhoMatriz
         self.Ny = self.tamanhoMatriz
-        #self.color = random.choice(self.colors)
         self.color = "hot"
+
+        ### Prints para testes. Descomentar linhas abaixo se necessário ### 
+        #print(self.estrela)
+        #self.color = random.choice(self.colors)
         #Plotar(self.tamanhoMatriz,self.estrela)
         #end = time.time()
         #print(end - start)
     
-    #######  inserir manchas
-
-
+#######  Inserção de manchas
     def manchas(self,r,intensidadeMancha,lat,longt):
         '''
         Função onde é criada a(s) mancha(s) da estrela. Todos os parâmetros 
@@ -101,7 +101,7 @@ class Estrela:
         :parâmetro longitudeMancha: Coordenada de longitude da mancha em relação à estrela 
         
         '''
-        # Parametros da mancha
+        # Parametros da mancha para teste
         # #r=0.05 (teste)
         # intensidadeMancha=0.5 (teste)
         # coordenadas da mancha em graus
@@ -144,16 +144,17 @@ class Estrela:
         spot = spot.reshape([self.Ny, self.Nx])
     
         self.estrela= self.estrela * spot
-        plt.axis([0,self.Nx,0,self.Ny])  #corrigir chamada do plot
-                
-        #self.estrelaManchada= estrelaManchada
-        
+
+        ### Plot para testes. Descomentar abaixo se necessario ### 
+        #plt.axis([0,self.Nx,0,self.Ny])  #corrigir chamada do plot
+        #self.estrelaManchada= estrelaManchada        
         #Plotar(self.tamanhoMatriz,self.estrela)
+
         error=0
         self.error=error
         return self.estrela #retorna a decisão: se há manchas ou não
 
-    #inserção de flares
+#### Inserção de flares
     def faculas(self,estrela,count): 
         
          #recebe como parâmetro a estrela atualizada
@@ -196,7 +197,7 @@ class Estrela:
         self.estrela=estrela
         return self.estrela #retorna a decisão: se há flare ou não 
 
-
+#### Getters
     def getNx(self):
         '''
         Retorna parâmetro Nx, necessário para o Eclipse.
