@@ -65,7 +65,7 @@ ecc = 0
 anom = 0 
 raioPlanJup = 0.0819 #em relação ao raio de jupiter
 raioPlanetaRstar = (raioPlanJup*69911)/raioStar #multiplicando pelo raio de jupiter em km 
-
+semiEixoUA = 0
 
 dec=int(input("Deseja calular o semieixo Orbital do planeta através da 3a LEI DE KEPLER? 1. Sim 2.Não | "))
 if dec==1:
