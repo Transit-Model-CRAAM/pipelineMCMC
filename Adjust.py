@@ -164,7 +164,7 @@ class AjusteManchado:
     def lnprior(self, theta):
         for i in range(len(theta)//4):
             #if (0.0 < lat) and (0.0 < long) and (0.0 < raioRstar < 0.5) and (0.0 < intensidade <= 1):
-            if (-40 < theta[i*4]) and (-40 < theta[(i*4)+1]) and (0.0 < theta[(i*4)+2] < 0.5) and (0.0 < theta[(i*4)+3] <= 1):
+            if (-70 <= theta[i*4] <= 70) and (-70 <= theta[(i*4)+1] <= 70) and (0.0 < theta[(i*4)+2] < 0.5) and (0.0 < theta[(i*4)+3] <= 1):
                 continue
             return -numpy.inf
         return 0.0
