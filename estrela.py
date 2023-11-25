@@ -134,7 +134,10 @@ class Estrela:
 
         # angulo de rotacao da mancha
         anguloRot=np.abs(np.arctan(ys/xs))    # em radianos
-        if self.latitudeMancha*self.longitudeMancha > 0: anguloRot=-anguloRot
+        if self.latitudeMancha*self.longitudeMancha > 0:
+            anguloRot = -anguloRot
+        elif self.latitudeMancha * self.longitudeMancha == 0:
+            anguloRot = 0
 
         ii, = np.where((((vx*np.cos(anguloRot)-vy*np.sin(anguloRot))/np.cos(anguloHelio))**2+(vx*np.sin(anguloRot)+vy*np.cos(anguloRot))**2) < self.raioMancha**2)
         

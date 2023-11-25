@@ -7,13 +7,15 @@ import numpy
 
 class Ajuste:
     
-    def __init__(self,tratamento, time, flux, nwalkers, niter, burnin):
+    def __init__(self,tratamento, time, flux, nwalkers, niter, burnin, rsun = 1, periodo = 1):
 
         self.u1_p0 = 0.5
         self.u2_p0 = 0.1
         self.a_p0 = 0.05
         self.inc_p0 = 88.
         self.rp_p0 = 1
+        self.rsun = rsun
+        self.periodo = periodo
 
         self.time = time
         self.flux = flux
@@ -37,10 +39,8 @@ class Ajuste:
     #----------------------MCMC------------------------#
     #--------------------------------------------------#
     def eclipse_mcmc(self, time, theta):
-        rsun = 1.
         u1, u2, semiEixoUA, anguloInclinacao, raioPlanJup = theta
-        periodo = 1.
-        raioStar, raioPlanetaRstar, semiEixoRaioStar = converte(rsun,raioPlanJup,semiEixoUA)
+        raioStar, raioPlanetaRstar, semiEixoRaioStar = converte(self.rsun,raioPlanJup,semiEixoUA)
         
         estrela_ = Estrela(373, raioStar, 240., u1, u2, 856)
         Nx = estrela_.getNx()
@@ -50,10 +50,11 @@ class Ajuste:
         
         eclipse = Eclipse(Nx,Ny,raioEstrelaPixel,estrelaManchada)
         eclipse.setTempoHoras(1.)
-        eclipse.criarEclipse(semiEixoRaioStar, semiEixoUA, raioPlanetaRstar, raioPlanJup, periodo, anguloInclinacao, 0,0 , 0, False, False)
+        eclipse.criarEclipse(semiEixoRaioStar, semiEixoUA, raioPlanetaRstar, raioPlanJup, self.periodo, anguloInclinacao, 0,0 , 0, False, False)
         lc0 = numpy.array(eclipse.getCurvaLuz()) 
         ts0 = numpy.array(eclipse.getTempoHoras()) 
         return interpolate.interp1d(ts0,lc0,fill_value="extrapolate")(time)
+        
     #--------------------------------------------------#
     def lnlike(self, theta, time, flux, flux_err):
         return -0.5 * numpy.sum(((flux - self.eclipse_mcmc(time, theta))/flux_err) ** 2)
@@ -84,7 +85,7 @@ class Ajuste:
     #--------------------------------------------------#
 
 class AjusteManchado: 
-    def __init__(self,tratamento, time, flux, nwalkers, niter, burnin, ndim, u1, u2, semiEixoUA, anguloInclinacao, raioPlanJup):
+    def __init__(self,tratamento, time, flux, nwalkers, niter, burnin, ndim, u1, u2, semiEixoUA, anguloInclinacao, raioPlanJup, rsun = 1, periodo = 1):
         
         # parametros das 4 manchas (limite) 
         # TODO: Arrumar multiplas manchas
@@ -98,6 +99,8 @@ class AjusteManchado:
         self.semiEixoUA = semiEixoUA
         self.anguloInclinacao = anguloInclinacao
         self.raioPlanJup = raioPlanJup
+        self.rsun = rsun
+        self.periodo = periodo
 
         self.time = time
         self.flux = flux
@@ -129,16 +132,9 @@ class AjusteManchado:
     #----------------------MCMC------------------------#
     #--------------------------------------------------#
     def eclipse_mcmc(self, time, theta):
-        rsun = 1.
-        u1 = self.u1
-        u2 = self.u2
-        semiEixoUA = self.semiEixoUA
-        anguloInclinacao = self.anguloInclinacao
-        raioPlanJup = self.raioPlanJup
-        periodo = 1.
-        raioStar, raioPlanetaRstar, semiEixoRaioStar = converte(rsun,self.raioPlanJup,self.semiEixoUA)
+        raioStar, raioPlanetaRstar, semiEixoRaioStar = converte(self.rsun,self.raioPlanJup,self.semiEixoUA)
         
-        estrela_ = Estrela(373, raioStar, 240., u1, u2, 856)
+        estrela_ = Estrela(373, raioStar, 240., self.u1, self.u2, 856)
         Nx = estrela_.getNx()
         Ny = estrela_.getNy()
         raioEstrelaPixel = estrela_.getRaioStar()
@@ -153,7 +149,7 @@ class AjusteManchado:
         estrelaManchada = estrela_.getEstrela()
         eclipse = Eclipse(Nx,Ny,raioEstrelaPixel,estrelaManchada)
         eclipse.setTempoHoras(1.)
-        eclipse.criarEclipse(semiEixoRaioStar, semiEixoUA, raioPlanetaRstar, raioPlanJup, periodo, anguloInclinacao, 0,0 , 0, False, False)
+        eclipse.criarEclipse(semiEixoRaioStar, self.semiEixoUA, raioPlanetaRstar, self.raioPlanJup, self.periodo, self.anguloInclinacao, 0,0 , 0, False, False)
         lc0 = numpy.array(eclipse.getCurvaLuz())
         ts0 = numpy.array(eclipse.getTempoHoras()) 
         return interpolate.interp1d(ts0,lc0,fill_value="extrapolate")(time)
