@@ -132,7 +132,7 @@ class AjusteManchado:
     #----------------------MCMC------------------------#
     #--------------------------------------------------#
     def eclipse_mcmc(self, time, theta):
-        raioStar, raioPlanetaRstar, semiEixoRaioStar = converte(self.rsun,self.raioPlanJup,self.self.semiEixoUA)
+        raioStar, raioPlanetaRstar, semiEixoRaioStar = converte(self.rsun,self.raioPlanJup,self.semiEixoUA)
         
         estrela_ = Estrela(373, raioStar, 240., self.u1, self.u2, 856)
         Nx = estrela_.getNx()
