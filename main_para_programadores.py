@@ -12,7 +12,7 @@ parâmetro raio:: raio da estrela em pixel
 parâmetro intensidadeMaxima:: intensidade da estrela que sera plotada 
 parâmetro tamanhoMatriz:: tamanho em pixels da matriz estrela
 parâmetro raioStar:: raio da estrela em relação ao raio do sol
-parâmetro coeficienteHum:: coeficiente de escurecimento de limbo 1 (u1)
+parâmetro coeficienteHum:: coeficiente de escurecimento de limbo 1 (u1)p
 parâmetro coeficienteDois:: coeficiente de escurecimento de limbo 2 (u2)
 objeto estrela_ :: é o objeto estrela onde é guardada a matriz estrela de acordo com os parâmetros. Chamadas das funções da classe
 estrela são feitas através dele.
