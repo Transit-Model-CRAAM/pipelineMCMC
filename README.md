@@ -71,20 +71,6 @@ To use it, go to the folder where the software is installed and type in the clip
 
 ***
 ## Authors
- <table>
-   <tr>
-     <td align="center">
-       <a href="https://github.com/felipexpinho">
-         <img src="https://avatars.githubusercontent.com/u/70541163?v=4" height="auto" width="100" style="corner-radius:50%" alt="Foto de perfil do GitHub do Pinho"/><br>
-         <sub>
-           <b> Felipe Pinho</b>
-         </sub>
-       </a>
-     </td>
-    </tr>
- </table>
- 
- ## Co - authors
 
  <table>
     <tr>
@@ -98,4 +84,18 @@ To use it, go to the folder where the software is installed and type in the clip
      </td>
   </tr>
   </table>
-  
+ 
+ ## Co - authors
+
+ <table>
+   <tr>
+     <td align="center">
+       <a href="https://github.com/felipexpinho">
+         <img src="https://avatars.githubusercontent.com/u/70541163?v=4" height="auto" width="100" style="corner-radius:50%" alt="Foto de perfil do GitHub do Pinho"/><br>
+         <sub>
+           <b> Felipe Pinho</b>
+         </sub>
+       </a>
+     </td>
+    </tr>
+ </table>
