@@ -11,8 +11,8 @@ __status__ = "Production"
 #%matplotlib inline
 
 import scipy
-from estrela import Estrela #estrela e eclipse:: extensões de programas auxiliares que realizam o cálculo da curva de luz.
-from eclipse import Eclipse
+from Star.Estrela import Estrela #estrela e eclipse:: extensões de programas auxiliares que realizam o cálculo da curva de luz.
+from Planet.Eclipse import Eclipse
 import numpy
 import matplotlib.pyplot as plt
 from lightkurve import search_lightcurve

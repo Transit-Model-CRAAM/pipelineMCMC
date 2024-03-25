@@ -23,9 +23,9 @@ import numpy as np
 import math
 import matplotlib.pyplot as plt
 from matplotlib import pyplot
-from estrela import Estrela
-from moon import Moon
-from verify import Validar
+from Star.Estrela import Estrela
+from Planet.Moon import Moon
+from Aux.Verify import Validar
 #from keplerAux import keplerfunc  #biblioteca auxiliar caso a biblioteca kepler nao funcione
 import matplotlib.animation as animation
 from kepler._core import solve #para o calculo de orbitas excentricas (pip install kepler)
@@ -236,13 +236,13 @@ class Eclipse:
         # Verifica o SO e se o Python é 32 ou 64 bit
         if(platform.system() == "Windows"):
             if(platform.architecture()[0] == "32bit"):
-                my_func = WinDLL('scripts/func32.dll', winmode = 0x8)
+                my_func = WinDLL('../../scripts/func32.dll', winmode = 0x8)
             elif(platform.architecture()[0] == "64bit"):
-                my_func = WinDLL('scripts/func64.dll', winmode = 0x8)
+                my_func = WinDLL('../../scripts/func64.dll', winmode = 0x8)
         elif(platform.system() == "Darwin"):
-            my_func = cdll.LoadLibrary('scripts/func64.dylib')
+            my_func = cdll.LoadLibrary('../../scripts/func64.dylib')
         else:
-            my_func = CDLL('scripts/func64.so')
+            my_func = CDLL('../../scripts/func64.so')
 
         # Prepara os tipos de cada variável dos argumentos e do retorno da função do calculo da curva de luz
         my_func.curvaLuz.restype = c_double

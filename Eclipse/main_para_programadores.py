@@ -1,9 +1,8 @@
 import numpy as np
 from matplotlib import pyplot
-from estrela import Estrela
-from eclipse import Eclipse
-#from model import Modelo
-from verify import Validar,calSemiEixo,calculaLat
+from Estrela import Estrela
+from Eclipse import Eclipse
+from Verify import Validar,calSemiEixo,calculaLat
 
 '''
 main programado para profissionais e estudantes familiarizados com a área 
