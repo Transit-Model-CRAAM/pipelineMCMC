@@ -9,5 +9,5 @@ lightkurve==2.4.2
 lmfit==1.1.0
 PyAstronomy==0.18.1
 pytz==2022.7.1
-requests==2.28.2
+requests==2.31.0
 scipy==1.10.0
