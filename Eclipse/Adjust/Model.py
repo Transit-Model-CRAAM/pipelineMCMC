@@ -11,8 +11,8 @@ __status__ = "Production"
 #%matplotlib inline
 
 import scipy
-from estrela import Estrela #estrela e eclipse:: extensões de programas auxiliares que realizam o cálculo da curva de luz.
-from eclipse import Eclipse
+from Star.Estrela import Estrela #estrela e eclipse:: extensões de programas auxiliares que realizam o cálculo da curva de luz.
+from Planet.Eclipse import Eclipse
 import numpy
 import matplotlib.pyplot as plt
 from lightkurve import search_lightcurve
@@ -20,11 +20,13 @@ from lightkurve import search_lightcurve
 
 class Modelo:
 
-    def __init__(self,estrela, eclipse):
-        '''
-        parâmetro estrela :: classe estrela 
-        parâmetro eclipse :: classe Eclipse
-        '''
+    '''
+    parâmetro estrela :: classe estrela 
+     parâmetro eclipse :: classe Eclipse
+    parâmetro missão :: Missão selecionada para a coleta da estrela (KEPLER, K2 OU TESS)
+    '''
+    def __init__(self,estrela, eclipse, mission):
+       
         #coletando objetos de estrela 
         self.u1 = estrela.getu1()
         self.u2 = estrela.getu2()
@@ -34,6 +36,7 @@ class Modelo:
         self.mx = estrela.getIntensidadeMaxima()
         self.star_name = estrela.getStarName() #nome da estrela
         self.cadence = estrela.getCadence() #cadencia da estrela (short ou long)
+        self.mission = mission
 
         #coletando objetos de Eclipse
         self.raioPlan = eclipse.getRaioPlan()
@@ -66,8 +69,9 @@ class Modelo:
         save_data = 1 plota a curva de luz(para não plotar, basta digitar qualquer valor)
         '''
     ##--------------------------------------------------------------------------------------------------------------------------------------------------##
-    # utiiza-se o PDCSAP_FLUX porque será realizado a análise no trânsito.
-        lc = search_lightcurve(self.star_name, cadence = self.cadence).download_all()
+    
+        # utiiza-se o PDCSAP_FLUX porque será realizado a análise no trânsito.
+        lc = search_lightcurve(self.star_name, cadence = self.cadence, mission=self.mission).download_all()
         time = [] # time = array com os dados de tempo
         flux = [] # flux = array com os dados de fluxo
         flux_err = [] # flux_err = array com os dados de erro do fluxo
@@ -75,7 +79,7 @@ class Modelo:
         flux_temp = []
         flux_err_temp = []
 
-        for i in range(0, len(lc)-1):
+        for i in range(0, len(lc)):
             try:
                 flux_temp.append(lc[i].sap_flux)
                 flux_err_temp.append(lc[i].sap_flux_err)
@@ -83,27 +87,27 @@ class Modelo:
             except:
                 pass
 
-        for i in range(0, len(flux_temp)-1):   
+        for i in range(0, len(flux_temp)):   
             
-    # Limita os índices aos valores de tempo lidos
+            # Limita os índices aos valores de tempo lidos
             flux_temp[i] = flux_temp[i][0:time_temp[i].size]
             flux_err_temp[i] = flux_err_temp[i][0:time_temp[i].size]
         
-    # Elimina todos os valores NaN (Not a Number) dos dados
+            # Elimina todos os valores NaN (Not a Number) dos dados
             time_temp[i] = time_temp[i][~numpy.isnan(flux_err_temp[i])]
             flux_temp[i] = flux_temp[i][~numpy.isnan(flux_err_temp[i])]
             flux_err_temp[i] = flux_err_temp[i][~numpy.isnan(flux_err_temp[i])]
         
-    # Normaliza cada quarter
+            # Normaliza cada quarter
             flux_err_temp[i] = flux_err_temp[i]/ abs(numpy.median(flux_temp[i]))
             flux_temp[i] = flux_temp[i]/ abs(numpy.median(flux_temp[i]))
 
-        for i in range(0, len(flux_temp)-1):
+        for i in range(0, len(flux_temp)):
             flux = numpy.append(flux, flux_temp[i])
             time = numpy.append(time, time_temp[i])
             flux_err = numpy.append(flux_err,flux_err_temp[i])
         
-    #plot da curva de luz completa
+        #plot da curva de luz completa
         if plot == (1):
             plt.rcParams['figure.figsize'] = 10,4
             graf1, ax = plt.subplots()
@@ -114,12 +118,10 @@ class Modelo:
             ax.set_title("Light Curve - " + self.star_name)
             ax.set_xlim(min(time), max(time))
             ax.set_ylim(min(flux), max(flux))
-        
-            #ax.plot(self.time, self.flux, "k.", ms=2)
-            
+                    
             ax.errorbar(time, flux, yerr = flux_err, fmt = '.k', capsize = 0,alpha = 0.5)
             
-    #salva os dados em um arquivo .dat
+        #salva os dados em um arquivo .dat
         if save_data == 1:
             numpy.savetxt('%s_LC.dat'%self.star_name, numpy.c_[(time, flux, flux_err)])
 
@@ -147,7 +149,7 @@ class Modelo:
         time = self.time 
         porb = self.porb
         flux = self.flux
-        
+
         phase = (time % porb)/ porb
         jj = numpy.argsort(phase)
         ff = phase[jj]

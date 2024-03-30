@@ -18,17 +18,14 @@ verify:função criada para validar entradas, por exemplo numeros nao float/int 
 '''
 
 
-import math
 import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
 import numpy as np
-from verify import Validar
-import random
+from Misc.Verify import Validar
 from ctypes import *
 from numpy.ctypeslib import ndpointer
-import time
-import sys
 import platform
+import os
 
 
 class Estrela:
@@ -59,17 +56,28 @@ class Estrela:
         #self.colors = ["gray","pink","hot"]
         error=0
         
+
         #start = time.time()
+        # Obter o caminho absoluto do diretório atual
+        dir_atual = os.path.dirname(os.path.abspath(__file__))
+
+        # Voltar um diretório para chegar ao diretório pai
+        dir_pai = os.path.dirname(dir_atual)
+        
         # Verifica o SO e se o Python é 32 ou 64 bit
         if(platform.system() == "Windows"):
             if(platform.architecture()[0] == "32bit"):
-                my_func = WinDLL('scripts/func32.dll', winmode = 0x8)
+                script_path = os.path.join(dir_pai, 'scripts', 'func32.dll')
+                my_func = WinDLL("a", winmode = 0x8)
             elif(platform.architecture()[0] == "64bit"):
-                my_func = WinDLL('scripts/func64.dll', winmode = 0x8)
+                script_path = os.path.join(dir_pai, 'scripts', 'func64.dll')
+                my_func = WinDLL(script_path, winmode = 0x8)
         elif(platform.system() == "Darwin"):
-            my_func = cdll.LoadLibrary('scripts/func64.dylib')
+            script_path = os.path.join(dir_pai, 'scripts', 'func64.dylib')
+            my_func = cdll.LoadLibrary(script_path)
         else:
-            my_func = CDLL('scripts/func64.so')
+            script_path = os.path.join(dir_pai, 'scripts', 'func64.so')
+            my_func = CDLL(script_path)
 
         my_func.criaEstrela.restype = ndpointer(dtype=c_int, ndim=2, shape=(self.tamanhoMatriz,self.tamanhoMatriz))
         self.estrela = my_func.criaEstrela(self.tamanhoMatriz,self.tamanhoMatriz,self.tamanhoMatriz,c_float(self.raio),c_float(self.intensidadeMaxima),c_float(self.coeficienteHum),c_float(self.coeficienteDois))
@@ -157,7 +165,7 @@ class Estrela:
         self.error=error
         return self.estrela #retorna a decisão: se há manchas ou não
 
-#### Inserção de flares
+    #### Inserção de fáculas
     def faculas(self,estrela,count): 
         
          #recebe como parâmetro a estrela atualizada
@@ -178,7 +186,8 @@ class Estrela:
         #vai sobrescrever a estrela que ele está criando, sendo ela a estrela ou a estrelaManchada.
         self.estrela=estrela
         return self.estrela #retorna a decisão: se há fácula ou não 
-    
+   
+    #### Inserção de flares
     def flares(self,estrela,count): #recebe como parâmetro a estrela atualizada
         '''
         Função onde são criadas os flares da estrela. Todos os parâmetros 
@@ -199,6 +208,16 @@ class Estrela:
         #vai sobrescrever a estrela que ele está criando, sendo ela a estrela ou a estrelaManchada.
         self.estrela=estrela
         return self.estrela #retorna a decisão: se há flare ou não 
+
+    #### Inserção de flares
+    def ejecaoDeMassa(self): 
+        # latitude 
+        # longitude 
+        # inclinacao
+        # shape 
+        # size
+        return self.estrela
+
 
 #### Getters
     def getNx(self):

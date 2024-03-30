@@ -1,8 +1,8 @@
 from scipy import interpolate
 import emcee
-from estrela import Estrela #estrela e eclipse:: extensões de programas auxiliares que realizam o cálculo da curva de luz.
-from eclipse import Eclipse
-from verify import converte
+from Star.Estrela import Estrela #estrela e eclipse:: extensões de programas auxiliares que realizam o cálculo da curva de luz.
+from Planet.Eclipse import Eclipse
+from Misc.Verify import converte
 import numpy
 
 class Ajuste:
