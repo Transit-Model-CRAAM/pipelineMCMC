@@ -2,7 +2,7 @@ import numpy as np
 from matplotlib import pyplot
 from Star.Estrela import Estrela
 from Planet.Eclipse import Eclipse
-from Aux.Verify  import Validar,calSemiEixo,calculaLat
+from Misc.Verify  import Validar,calSemiEixo,calculaLat
 
 '''
 main programado para profissionais e estudantes familiarizados com a área 
@@ -45,10 +45,10 @@ parâmetro tempoHoras:: tempo do transito em horas
 raio= 373. #default (pixel)
 intensidadeMaxima=240 #default
 tamanhoMatriz = 856 #default
-raioSun=1.05 #raio da estrela em relacao ao raio do sol
+raioSun=0.805 #raio da estrela em relacao ao raio do sol
 raioStar=raioSun*696340 #multiplicando pelo raio solar em Km 
-coeficienteHum=0.405
-coeficienteDois=0.262
+coeficienteHum=0.377
+coeficienteDois=0.024
 
 
 #cria estrela
@@ -58,13 +58,13 @@ Nx= estrela_.getNx() #Nx e Ny necessarios para a plotagem do eclipse
 Ny= estrela_.getNy()
 dtor = np.pi/180.  
 
-periodo = 1.49 # em dias
-anguloInclinacao = 87.2  # em graus
+periodo = 2.219 # em dias
+anguloInclinacao = 85.51  # em graus
 ecc = 0
 anom = 0 
-raioPlanJup = 1.312 #em relação ao raio de jupiter
+raioPlanJup = 1.138 #em relação ao raio de jupiter
 raioPlanetaRstar = (raioPlanJup*69911)/raioStar #multiplicando pelo raio de jupiter em km 
-semiEixoUA = 0.0259
+semiEixoUA = 0.031
 
 dec=int(input("Deseja calular o semieixo Orbital do planeta através da 3a LEI DE KEPLER? 1. Sim 2.Não | "))
 if dec==1:
