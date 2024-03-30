@@ -153,7 +153,7 @@ class Estrela:
         self.error=error
         return self.estrela #retorna a decisão: se há manchas ou não
 
-#### Inserção de flares
+    #### Inserção de fáculas
     def faculas(self,estrela,count): 
         
          #recebe como parâmetro a estrela atualizada
@@ -174,7 +174,8 @@ class Estrela:
         #vai sobrescrever a estrela que ele está criando, sendo ela a estrela ou a estrelaManchada.
         self.estrela=estrela
         return self.estrela #retorna a decisão: se há fácula ou não 
-    
+   
+    #### Inserção de flares
     def flares(self,estrela,count): #recebe como parâmetro a estrela atualizada
         '''
         Função onde são criadas os flares da estrela. Todos os parâmetros 
@@ -195,6 +196,16 @@ class Estrela:
         #vai sobrescrever a estrela que ele está criando, sendo ela a estrela ou a estrelaManchada.
         self.estrela=estrela
         return self.estrela #retorna a decisão: se há flare ou não 
+
+    #### Inserção de flares
+    def ejecaoDeMassa(self): 
+        # latitude 
+        # longitude 
+        # inclinacao
+        # shape 
+        # size
+        return self.estrela
+
 
 #### Getters
     def getNx(self):
