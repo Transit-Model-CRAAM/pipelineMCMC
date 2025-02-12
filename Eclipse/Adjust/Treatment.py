@@ -21,7 +21,7 @@ class Tratamento :
         parâmetro nt :: 
         '''
         self.modelo = modelo
-        self.u1,self.u2,self.porb,self.time,self.flux,self.flux_err,self.raioPlan,self.AU,self.inc,self.x0,self.nt,self.ts_model = modelo.retornaParametros()
+        self.u1,self.u2,self.porb,self.time,self.flux,self.flux_err,self.raioPlan,self.AU,self.inc,self.x0,self.nt,self.ts_model, self.mass = modelo.retornaParametros()
 
     def cut_transit_single(self):
         

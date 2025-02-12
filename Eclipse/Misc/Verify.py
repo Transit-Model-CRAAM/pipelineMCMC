@@ -52,7 +52,7 @@ def calSemiEixo(periodo,mass):
 
 def calculaLat(semiEixoRaioStar,anguloInclinacao):
     '''Funcao que calcula latitude para que a mancha seja influente na curva de luz'''
-    dtor=np.pi/180
+    dtor = np.pi/180
     lat = - (np.arcsin(semiEixoRaioStar*np.cos(anguloInclinacao*dtor))/dtor)
     return lat
 
