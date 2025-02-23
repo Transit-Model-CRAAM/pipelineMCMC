@@ -10,7 +10,9 @@ __status__ = "Production"
 #%matplotlib nbagg
 #%matplotlib inline
 
+from typing import List
 import scipy
+from Planet.Planeta import Planeta
 from Star.Estrela import Estrela #estrela e eclipse:: extensões de programas auxiliares que realizam o cálculo da curva de luz.
 from Planet.Eclipse import Eclipse
 import numpy
@@ -25,7 +27,7 @@ class Modelo:
      parâmetro eclipse :: classe Eclipse
     parâmetro missão :: Missão selecionada para a coleta da estrela (KEPLER, K2 OU TESS)
     '''
-    def __init__(self,estrela, eclipse, mission):
+    def __init__(self,estrela: Estrela, eclipse: Eclipse, mission):
        
         #coletando objetos de estrela 
         self.u1 = estrela.getu1()
@@ -38,15 +40,20 @@ class Modelo:
         self.cadence = estrela.getCadence() #cadencia da estrela (short ou long)
         self.mission = mission
 
+        self.manchas: List[Estrela.Mancha] = estrela.manchas
+
         #coletando objetos de Eclipse
-        self.raioPlan = eclipse.getRaioPlan()
-        self.R_jup = eclipse.getRplanJup()
-        self.AU = eclipse.getSemiEixo() #semieixo em UA
-        self.semiEixoRaioStar = eclipse.getsemiEixoRaioStar() #semieixo em relacao ao raio da estrela
-        self.porb = eclipse.getPeriodo()
-        self.inc = eclipse.getInc()
-        self.ecc,self.anom = eclipse.getEccAnom()
-        self.lua = eclipse.getLua()
+        self.raioPlan = eclipse.planeta_.getRaioPlan()
+        self.R_jup = eclipse.planeta_.getRplanJup()
+        self.AU = eclipse.planeta_.getSemiEixo() #semieixo em UA
+        self.semiEixoRaioStar = eclipse.planeta_.getsemiEixoRaioStar() #semieixo em relacao ao raio da estrela
+        self.porb = eclipse.planeta_.getPeriodo()
+        self.inc = eclipse.planeta_.getInc()
+        self.mass = eclipse.planeta_.mass
+        self.ecc,self.anom = eclipse.planeta_.getEccAnom()
+
+        if eclipse.planeta_.hasMoons(): 
+            self.lua = eclipse.planeta_.luas[0] # por enquanto apenas uma lua 
 
         #variaveis que serao retornadas a partir da função rd_data
         self.time = 0.
@@ -71,7 +78,7 @@ class Modelo:
     ##--------------------------------------------------------------------------------------------------------------------------------------------------##
     
         # utiiza-se o PDCSAP_FLUX porque será realizado a análise no trânsito.
-        lc = search_lightcurve(self.star_name, cadence = self.cadence, mission=self.mission).download_all()
+        lc = search_lightcurve(self.star_name, cadence = self.cadence, mission = self.mission).download_all()
         time = [] # time = array com os dados de tempo
         flux = [] # flux = array com os dados de fluxo
         flux_err = [] # flux_err = array com os dados de erro do fluxo
@@ -79,7 +86,7 @@ class Modelo:
         flux_temp = []
         flux_err_temp = []
 
-        for i in range(0, len(lc)):
+        for i in range(0, len(lc)-1):
             try:
                 flux_temp.append(lc[i].sap_flux)
                 flux_err_temp.append(lc[i].sap_flux_err)
@@ -118,6 +125,13 @@ class Modelo:
             ax.set_title("Light Curve - " + self.star_name)
             ax.set_xlim(min(time), max(time))
             ax.set_ylim(min(flux), max(flux))
+
+            time = numpy.array(time)
+            flux = numpy.array(flux)
+            flux_err = numpy.array(flux_err)
+
+            if numpy.any(numpy.isnan(flux_err)) or numpy.any(numpy.isinf(flux_err)):
+                print("Erro: flux_err contém NaN ou inf")
                     
             ax.errorbar(time, flux, yerr = flux_err, fmt = '.k', capsize = 0,alpha = 0.5)
             
@@ -267,17 +281,26 @@ class Modelo:
         parâmetro ts_model :: tempo do trânsito em Horas
         
         '''
+
         estrela_1 = Estrela(self.r,self.r_Sun, self.mx , self.u1, self.u2, self.n)  #cria o objeto estrela 
+        
+        if self.manchas: 
+            for mancha in self.manchas: 
+                estrela_1.addMancha(mancha)
+            estrela_1.criaEstrelaManchada()
+            
         Nx1 = estrela_1.getNx() #coleta parametros da matriz estrela 
         Ny1 = estrela_1.getNy()
         raioEstrelaPixel1 = estrela_1.getRaioStar() #coleta raio da estrela em pixel 
-        estrelaManchada1 = estrela_1.getEstrela() #coleta estrela manchada 
+        # elf, semiEixoUA, raioPlanJup, periodo, anguloInclinacao, ecc, anom, raioStar,mass
+        planeta_1 = Planeta(self.AU, self.R_jup, self.porb, self.inc, self.ecc, self.anom, self.r_Sun, self.mass)
 
-        eclipse1 = Eclipse(Nx1, Ny1, raioEstrelaPixel1, estrelaManchada1)  #cria o objeto eclipse
+        # self, Nx, Ny, raio_estrela_pixel, estrela_manchada: Estrela, planeta_: Planeta):
+        eclipse1 = Eclipse(Nx1, Ny1, raioEstrelaPixel1, estrela_1, planeta_1)  #cria o objeto eclipse
 
         eclipse1.setTempoHoras(1.)
 
-        eclipse1.criarEclipse(self.semiEixoRaioStar, self.AU, self.raioPlan,self.R_jup, self.porb,self.inc,self.lua,self.ecc,self.anom, False)
+        eclipse1.criarEclipse(anim = False, plot = False)
 
         self.lc_model = numpy.array(eclipse1.getCurvaLuz())
         self.ts_model = numpy.array(eclipse1.getTempoHoras())
@@ -286,7 +309,7 @@ class Modelo:
 
     #--------------------------------------------------#
     def retornaParametros(self):
-        return self.u1,self.u2,self.porb,self.time,self.flux,self.flux_err,self.raioPlan,self.AU,self.inc, self.x0, self.nt,self.ts_model
+        return self.u1,self.u2,self.porb,self.time,self.flux,self.flux_err,self.raioPlan,self.AU,self.inc, self.x0, self.nt,self.ts_model, self.mass
     
     def setTime(self,time):
         self.time = time
