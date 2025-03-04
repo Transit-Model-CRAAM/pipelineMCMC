@@ -1,9 +1,8 @@
 import numpy as np
 from matplotlib import pyplot
-from estrela_nv1 import estrela
-from eclipse_nv1 import Eclipse
-#from model import Modelo
-from verify import Validar,calSemiEixo,calculaLat
+from Star.Estrela import Estrela
+from Planet.Eclipse import Eclipse
+from Misc.Verify  import Validar,calSemiEixo,calculaLat
 
 '''
 main programado para profissionais e estudantes familiarizados com a área 
@@ -12,7 +11,7 @@ parâmetro raio:: raio da estrela em pixel
 parâmetro intensidadeMaxima:: intensidade da estrela que sera plotada 
 parâmetro tamanhoMatriz:: tamanho em pixels da matriz estrela
 parâmetro raioStar:: raio da estrela em relação ao raio do sol
-parâmetro coeficienteHum:: coeficiente de escurecimento de limbo 1 (u1)
+parâmetro coeficienteHum:: coeficiente de escurecimento de limbo 1 (u1)p
 parâmetro coeficienteDois:: coeficiente de escurecimento de limbo 2 (u2)
 objeto estrela_ :: é o objeto estrela onde é guardada a matriz estrela de acordo com os parâmetros. Chamadas das funções da classe
 estrela são feitas através dele.
@@ -46,41 +45,43 @@ parâmetro tempoHoras:: tempo do transito em horas
 raio= 373. #default (pixel)
 intensidadeMaxima=240 #default
 tamanhoMatriz = 856 #default
-raioSun=0.117 #raio da estrela em relacao ao raio do sol
+raioSun=0.805 #raio da estrela em relacao ao raio do sol
 raioStar=raioSun*696340 #multiplicando pelo raio solar em Km 
-coeficienteHum=0.65
-coeficienteDois=0.28
+coeficienteHum=0.377
+coeficienteDois=0.024
 
 
 #cria estrela
-estrela_ = estrela(raio,raioSun,intensidadeMaxima,coeficienteHum,coeficienteDois,tamanhoMatriz)
+estrela_ = Estrela(raio,raioSun,intensidadeMaxima,coeficienteHum,coeficienteDois,tamanhoMatriz)
 
 Nx= estrela_.getNx() #Nx e Ny necessarios para a plotagem do eclipse
 Ny= estrela_.getNy()
 dtor = np.pi/180.  
 
-periodo = 6.099 # em dias
-anguloInclinacao = 89.86  # em graus
+periodo = 2.219 # em dias
+anguloInclinacao = 85.51  # em graus
 ecc = 0
 anom = 0 
-raioPlanJup = 0.0819 #em relação ao raio de jupiter
+raioPlanJup = 1.138 #em relação ao raio de jupiter
 raioPlanetaRstar = (raioPlanJup*69911)/raioStar #multiplicando pelo raio de jupiter em km 
+semiEixoUA = 0.031
 
-
-dec=int(input("Deseja calular o semieixo Orbital do planeta através da 3a LEI DE KEPLER? 1. Sim 2.Não |"))
+dec=int(input("Deseja calular o semieixo Orbital do planeta através da 3a LEI DE KEPLER? 1. Sim 2.Não | "))
 if dec==1:
     mass=0. #colocar massa da estrela em relação a massa do sol
-    semieixoorbital = calSemiEixo(mass,periodo)
+    semieixoorbital = calSemiEixo(periodo,mass)
     semiEixoRaioStar = ((semieixoorbital/1000)/raioStar)
     #transforma em km para fazer em relação ao raio da estrela
 else:
-    semiEixoUA = Validar('Semi eixo (em UA:)')
+    #semiEixoUA = Validar('Semi eixo (em UA:)') #descomentar essa linha caso queira adicionar o valor em runtime
+    semiEixoUA = 0.028 # Adicionar apenas valores maiores que 0 
+
     # em unidades de Rstar
     semiEixoRaioStar = ((1.469*(10**8))*semiEixoUA)/raioStar
     #multiplicando pelas UA (transformando em Km) e convertendo em relacao ao raio da estrela 
 
 latsugerida = calculaLat(semiEixoRaioStar,anguloInclinacao)
-print("A latitude sugerida para que a mancha influencie na curva de luz da estrela é:", latsugerida)
+print("A latitude sugerida para que a mancha influencie na curva de luz da estrela é: ", latsugerida)
 
 #manchas
 count = 0

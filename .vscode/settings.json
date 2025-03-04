@@ -1,0 +1,17 @@
+{
+    "python.pythonPath": "/usr/local/bin/python3",
+    "python.analysis.extraPaths": [
+        "./Eclipse/Star",
+        "./Eclipse/Star/Estrela",
+        "./Eclipse/Aux/KeplerAux",
+        "./Eclipse/Aux",
+        "./Eclipse/Aux/Verify",
+        "./Eclipse/Adjust",
+        "./Eclipse/Adjust/Adjust",
+        "./Eclipse/Adjust/Model",
+        "./Eclipse/Adjust/Treatment",
+        "./Eclipse/Planet",
+        "./Eclipse/Planet/Eclipse",
+        "./Eclipse/Planet/Moon",
+    ]
+}
