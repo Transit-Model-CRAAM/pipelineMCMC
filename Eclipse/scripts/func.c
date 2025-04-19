@@ -3,9 +3,9 @@
 #include <omp.h>
 #include <math.h>
 
-int* criaEstrela(int lin, int col, int tamanhoMatriz, float raio, float intensidadeMaxima, float coeficienteHum, float coeficienteDois){
+float* criaEstrela(int lin, int col, int tamanhoMatriz, float raio, float intensidadeMaxima, float coeficienteHum, float coeficienteDois){
 	int i, j;
-	int *estrela = (int*) malloc (lin * col * sizeof(int*));
+	float *estrela = (float*) malloc (lin * col * sizeof(float*));
 	int index;
 
 #pragma omp parallel
@@ -27,7 +27,7 @@ int* criaEstrela(int lin, int col, int tamanhoMatriz, float raio, float intensid
 			if(distanciaCentro <= raio){
 				cosTheta = sqrt(1-pow(distanciaCentro/raio,2));
 				index = i*(lin) + j;
-				estrela[index] = (int) (intensidadeMaxima * (1 - coeficienteHum * (1 - cosTheta) - coeficienteDois * (pow(1 - cosTheta,2))));
+				estrela[index] = intensidadeMaxima * (1 - coeficienteHum * (1 - cosTheta) - coeficienteDois * (pow(1 - cosTheta,2)));
 			}
 		}
 	}

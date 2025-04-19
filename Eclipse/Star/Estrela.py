@@ -105,7 +105,7 @@ class Estrela:
             script_path = os.path.join(dir_pai, 'scripts', 'func64.so')
             my_func = CDLL(script_path)
 
-        my_func.criaEstrela.restype = ndpointer(dtype=c_int, ndim=2, shape=(self.tamanhoMatriz,self.tamanhoMatriz))
+        my_func.criaEstrela.restype = ndpointer(dtype=c_float, ndim=2, shape=(self.tamanhoMatriz,self.tamanhoMatriz))
         estrelaMatriz = my_func.criaEstrela(self.tamanhoMatriz,self.tamanhoMatriz,self.tamanhoMatriz,c_float(self.raio),c_float(self.intensidadeMaxima),c_float(self.coeficienteHum),c_float(self.coeficienteDois))
 
         del my_func
