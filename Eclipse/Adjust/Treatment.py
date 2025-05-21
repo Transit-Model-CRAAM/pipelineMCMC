@@ -212,3 +212,21 @@ class Tratamento :
         bb = numpy.where((self.time_phased >= min(self.ts_model)) & (self.time_phased <= max(self.ts_model)))
         
         return self.time_phased[bb], self.smoothed_LC[bb]
+
+    def select_transit_smooth_simple(self, selection): 
+        i = selection
+        
+        lc = []
+        t = []
+        
+        # for i in tran_selec:
+        lc = numpy.append(lc, self.n_f_split[i])
+        t = numpy.append(t, (self.t_split[i]+self.porb*24*i)/24+self.x0)
+        
+        phase = (t % self.porb)/ self.porb
+        jj = numpy.argsort(phase)
+        ff = phase[jj]
+
+        self.smoothed_LC = scipy.ndimage.filters.uniform_filter(self.flux, size = 10) # equivalente ao smooth do idl com edge_truncade
+        
+        return self.smoothed_LC
