@@ -9,11 +9,13 @@ import numpy
 class Ajuste:
     
     def __init__(self,tratamento, time, flux, nwalkers, niter, burnin, rsun = 1, periodo = 1):
-        self.u1_p0 = 0.5
-        self.u2_p0 = 0.1
-        self.a_p0 = 0.05
-        self.inc_p0 = 88.
-        self.rp_p0 = 1
+        self.tratamento = tratamento
+
+        self.u1_p0 = self.tratamento.u1
+        self.u2_p0 = self.tratamento.u2
+        self.a_p0 = self.tratamento.AU
+        self.inc_p0 = self.tratamento.inc
+        self.rp_p0 = self.tratamento.modelo.R_jup
         self.rsun = rsun
         self.periodo = periodo
 
@@ -33,8 +35,6 @@ class Ajuste:
         variations = numpy.array([0.001, 0.001, 0.001, 0.5, 0.01])
 
         self.p0 = [numpy.array(self.initial) + variations * numpy.random.randn(self.ndim) for i in range(self.nwalkers)]
-
-        self.tratamento = tratamento
 
     #--------------------------------------------------#
     #----------------------MCMC------------------------#

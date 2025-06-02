@@ -21,7 +21,7 @@ class Tratamento :
         parâmetro nt :: 
         '''
         self.modelo = modelo
-        self.u1,self.u2,self.porb,self.time,self.flux,self.flux_err,self.raioPlan,self.AU,self.inc,self.x0,self.nt,self.ts_model, self.mass = modelo.retornaParametros()
+        self.u1,self.u2,self.porb,self.raioPlan,self.AU,self.inc,self.ts_model, self.mass = modelo.retornaParametros()
 
     def cut_transit_single(self):
         
@@ -175,31 +175,17 @@ class Tratamento :
         
     #--------------------------------------------------#
 
-    def select_transit_smooth(self, selection):
-    
+    def select_transit_smooth(self, selection: int, yh:float = 0.01):
         '''
         Funcao para selecionar o transito desejado
         selection :: número do transito selecionado
         '''   
-
         i = selection
-        
-        lc = []
-        t = []
-        
-        # for i in tran_selec:
-        lc = numpy.append(lc, self.n_f_split[i])
-        t = numpy.append(t, (self.t_split[i]+self.porb*24*i)/24+self.x0)
-        
-        phase = (t % self.porb)/ self.porb
-        jj = numpy.argsort(phase)
-        ff = phase[jj]
 
-        self.smoothed_LC = scipy.ndimage.filters.uniform_filter(lc[jj], size = 10) # equivalente ao smooth do idl com edge_truncade
+        self.smoothed_LC = scipy.ndimage.filters.uniform_filter(self.modelo.transit_list[i]["flux"], size = 10) # equivalente ao smooth do idl com edge_truncade
 
-        x = phase[jj]
+        x = self.modelo.transit_list[i]["time"].jd
         y = 1 - self.smoothed_LC
-        yh = 0.002
 
         kk = numpy.where(y >= yh)
 
@@ -207,8 +193,6 @@ class Tratamento :
         x2 = max(x[kk])
         fa0 = (x1 + x2)/ 2 # valor central dos transitos em fase
 
-        self.time_phased = (ff - fa0)*self.porb*24
-
-        bb = numpy.where((self.time_phased >= min(self.ts_model)) & (self.time_phased <= max(self.ts_model)))
+        self.time_phased = (x - fa0)*24
         
-        return self.time_phased[bb], self.smoothed_LC[bb]
+        return self.time_phased, self.smoothed_LC
