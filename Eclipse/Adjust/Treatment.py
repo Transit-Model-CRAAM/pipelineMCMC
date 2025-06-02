@@ -22,6 +22,7 @@ class Tratamento :
         '''
         self.modelo = modelo
         self.u1,self.u2,self.porb,self.raioPlan,self.AU,self.inc,self.ts_model, self.mass = modelo.retornaParametros()
+        self.planet_name = modelo.planet_name
 
     def cut_transit_single(self):
         

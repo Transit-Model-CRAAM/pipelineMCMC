@@ -50,7 +50,7 @@ class Ajuste:
         raioEstrelaPixel = estrela_.getRaioStar()
         
         # semiEixoUA, raioPlanJup, periodo, anguloInclinacao, ecc, anom, raioStar,mass): 
-        planeta_ = Planeta(semiEixoUA, raioPlanJup, self.periodo, anguloInclinacao, 0, 0, estrela_.getRaioSun(), self.tratamento.mass)
+        planeta_ = Planeta(semiEixoUA, raioPlanJup, self.periodo, anguloInclinacao, 0, 0, estrela_.getRaioSun(), self.tratamento.mass, self.tratamento.planet_name)
         
         # Nx, Ny, raio_estrela_pixel, estrela_manchada: Estrela, planeta_: Planeta
         eclipse = Eclipse(Nx,Ny,raioEstrelaPixel,estrela_, planeta_)
@@ -158,7 +158,7 @@ class AjusteManchado:
         
         estrela_.criaEstrelaManchada()
         # semiEixoUA, raioPlanJup, periodo, anguloInclinacao, ecc, anom, raioStar,mass): 
-        planeta_ = Planeta(self.semiEixoUA, self.raioPlanJup, self.periodo, self.anguloInclinacao, 0, 0, estrela_.getRaioSun(), self.tratamento.mass)
+        planeta_ = Planeta(self.semiEixoUA, self.raioPlanJup, self.periodo, self.anguloInclinacao, 0, 0, estrela_.getRaioSun(), self.tratamento.mass, self.tratamento.planet_name)
         
         # Nx, Ny, raio_estrela_pixel, estrela_manchada: Estrela, planeta_: Planeta
         eclipse = Eclipse(Nx,Ny,raioEstrelaPixel,estrela_, planeta_)
