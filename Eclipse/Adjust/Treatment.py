@@ -1,9 +1,10 @@
 import scipy
 import numpy
+from Adjust.Model import Modelo
 
 class Tratamento :
     
-    def __init__(self,modelo):
+    def __init__(self,modelo: Modelo):
 
         '''
         Funcao para extrair os transitos individualmente da curva de luz
@@ -84,14 +85,14 @@ class Tratamento :
         
         size = [] #quantidade de pontos presentes em até 3* a duração do transito
         for u in range(int(self.nt)):
-            size.append(len(numpy.where(numpy.sort(numpy.abs(self.t_split[i])) < self.dur*3.)[0]))  
+            size.append(len(numpy.where(numpy.sort(numpy.abs(self.t_split[i])) < self.dur*6.)[0]))  
             
         # considerado dados que apresentam fluxo maior que 0 
         # e dados de tempo com quantidade de pontos com 0.9*numpy.mean(size)
         self.n_f_split = []
         n_f_err_split = []
         for i in range(0, int(self.nt)):
-            if len((f_split[i] > 0) & (len(numpy.where(numpy.sort(numpy.abs(self.t_split[i])) < self.dur*3.)[0]) > numpy.mean(size)*.9)):
+            if len((f_split[i] > 0) & (len(numpy.where(numpy.sort(numpy.abs(self.t_split[i])) < self.dur*6.)[0]) > numpy.mean(size)*.9)):
                 ss = numpy.polyfit(self.t_split[i], f_split[i], 1)
                 zz = numpy.polyval(ss, self.t_split[i])
                 self.n_f_split.append(numpy.array(f_split[i] - zz + 1))
@@ -103,11 +104,11 @@ class Tratamento :
         #renormalização
         w_flux = []
         for i in range(0, int(self.nt)):
-            if len((self.n_f_split[i] > 0) & (len(numpy.where(numpy.sort(numpy.abs(self.t_split[i])) < self.dur*3.)[0]) > numpy.mean(size)*.9)):
+            if len((self.n_f_split[i] > 0) & (len(numpy.where(numpy.sort(numpy.abs(self.t_split[i])) < self.dur*6.)[0]) > numpy.mean(size)*.9)):
                 w_flux =  numpy.append(w_flux, self.n_f_split[i])
         m0 = numpy.median(w_flux) 
         for i in range(0, int(self.nt)):
-            if len((self.n_f_split[i] > 0) & (len(numpy.where(numpy.sort(numpy.abs(self.t_split[i])) < self.dur*3.)[0]) > numpy.mean(size)*.9)):
+            if len((self.n_f_split[i] > 0) & (len(numpy.where(numpy.sort(numpy.abs(self.t_split[i])) < self.dur*6.)[0]) > numpy.mean(size)*.9)):
                 self.n_f_split[i] = self.n_f_split[i]/m0
                 n_f_err_split[i] = n_f_err_split[i]/m0
 
@@ -207,6 +208,7 @@ class Tratamento :
         x2 = max(x[kk])
         fa0 = (x1 + x2)/ 2 # valor central dos transitos em fase
 
+        print("porb", self.porb)
         self.time_phased = (ff - fa0)*self.porb*24
 
         bb = numpy.where((self.time_phased >= min(self.ts_model)) & (self.time_phased <= max(self.ts_model)))
