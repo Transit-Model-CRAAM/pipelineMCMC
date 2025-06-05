@@ -128,7 +128,7 @@ class Tratamento :
         
         returns
         parâmetro time_phased[bb] :: tempo 
-        parâmetro smoothed_LC[bb] :: curva de luz Smoothed
+        parâmetro self.smoothed_LC[bb] :: curva de luz Smoothed
         '''
         
         if selection == 0:
@@ -169,7 +169,7 @@ class Tratamento :
 
         bb = numpy.where((self.time_phased >= min(self.ts_model)) & (self.time_phased <= max(self.ts_model)))
         
-        return self.time_phased[bb], self.smoothed_LC[bb]
+        return self.time_phased[bb], self.self.smoothed_LC[bb]
 
     def gettime_phased(self):
         return self.time_phased
@@ -178,7 +178,9 @@ class Tratamento :
 
     def select_transit_smooth(self, selection: int, yh:float = 0.01):
         '''
-        Funcao para selecionar o transito desejado
+        Funcao para selecionar o transito desejado e calcular a mediana 
+        da curva de luz para ajustar trânsitos que ficam "tortos" em relação
+        ao ponto 1 de luminosidade
         selection :: número do transito selecionado
         '''   
         i = selection
@@ -195,5 +197,19 @@ class Tratamento :
         fa0 = (x1 + x2)/ 2 # valor central dos transitos em fase
 
         self.time_phased = (x - fa0)*24
-        
-        return self.time_phased, self.smoothed_LC
+
+        n = int(len(self.smoothed_LC) * (10/100))  # número de pontos no início e no fim para tirar a mediana
+
+        # Calculando as medianas nos dois extremos
+        mediana_inicio = numpy.median(self.smoothed_LC[:n])
+        mediana_fim = numpy.median(self.smoothed_LC[-n:])
+
+        # Criando a reta entre esses dois pontos
+        reta = numpy.linspace(mediana_inicio, mediana_fim, len(self.smoothed_LC))
+
+        # Subtraindo a tendência da curva original
+        detrended_LC = self.smoothed_LC / reta
+
+        self.detrended_LC = detrended_LC / numpy.median(detrended_LC)
+
+        return self.time_phased,  self.detrended_LC
