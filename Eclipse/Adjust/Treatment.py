@@ -228,5 +228,19 @@ class Tratamento :
         ff = phase[jj]
 
         self.smoothed_LC = scipy.ndimage.filters.uniform_filter(self.flux, size = 10) # equivalente ao smooth do idl com edge_truncade
+
+        x = phase[jj]
+        y = 1 - self.smoothed_LC
+        yh = 0.002
+
+        kk = numpy.where(y >= yh)
+
+        x1 = min(x[kk])
+        x2 = max(x[kk])
+        fa0 = (x1 + x2)/ 2 # valor central dos transitos em fase
+
+        self.time_phased = (ff - fa0)*self.porb*24
+
+        bb = numpy.where((self.time_phased >= min(self.ts_model)) & (self.time_phased <= max(self.ts_model)))
         
-        return self.smoothed_LC
+        return self.smoothed_LC, self.time_phased
