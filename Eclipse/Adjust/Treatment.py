@@ -215,25 +215,13 @@ class Tratamento :
         return self.time_phased,  self.detrended_LC
 
 
-    def select_transit_smooth_simple(self, selection): 
+    def select_transit_smooth_simple(self, selection, yh:float = 0.01): 
         i = selection
-        
-        lc = []
-        t = []
-        
-        # for i in tran_selec:
-        lc = numpy.append(lc, self.n_f_split[i])
-        t = numpy.append(t, (self.t_split[i]+self.porb*24*i)/24+self.x0)
-        
-        phase = (t % self.porb)/ self.porb
-        jj = numpy.argsort(phase)
-        ff = phase[jj]
 
-        self.smoothed_LC = scipy.ndimage.filters.uniform_filter(self.flux, size = 10) # equivalente ao smooth do idl com edge_truncade
+        self.smoothed_LC = scipy.ndimage.filters.uniform_filter(self.modelo.transit_list[i]["flux"], size = 10) # equivalente ao smooth do idl com edge_truncade
 
-        x = phase[jj]
+        x = self.modelo.transit_list[i]["time"].jd
         y = 1 - self.smoothed_LC
-        yh = 0.002
 
         kk = numpy.where(y >= yh)
 
@@ -241,8 +229,7 @@ class Tratamento :
         x2 = max(x[kk])
         fa0 = (x1 + x2)/ 2 # valor central dos transitos em fase
 
-        self.time_phased = (ff - fa0)*self.porb*24
+        self.time_phased = (x - fa0)*24
 
-        bb = numpy.where((self.time_phased >= min(self.ts_model)) & (self.time_phased <= max(self.ts_model)))
         
-        return self.smoothed_LC, self.time_phased
+        return self.time_phased,  self.smoothed_LC
