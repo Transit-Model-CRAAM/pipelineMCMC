@@ -21,7 +21,8 @@ class Tratamento :
         parâmetro nt :: 
         '''
         self.modelo = modelo
-        self.u1,self.u2,self.porb,self.time,self.flux,self.flux_err,self.raioPlan,self.AU,self.inc,self.x0,self.nt,self.ts_model, self.mass = modelo.retornaParametros()
+        self.u1,self.u2,self.porb,self.raioPlan,self.AU,self.inc,self.ts_model, self.mass = modelo.retornaParametros()
+        self.planet_name = modelo.planet_name
 
     def cut_transit_single(self):
         
@@ -127,7 +128,7 @@ class Tratamento :
         
         returns
         parâmetro time_phased[bb] :: tempo 
-        parâmetro smoothed_LC[bb] :: curva de luz Smoothed
+        parâmetro self.smoothed_LC[bb] :: curva de luz Smoothed
         '''
         
         if selection == 0:
@@ -168,38 +169,26 @@ class Tratamento :
 
         bb = numpy.where((self.time_phased >= min(self.ts_model)) & (self.time_phased <= max(self.ts_model)))
         
-        return self.time_phased[bb], self.smoothed_LC[bb]
+        return self.time_phased[bb], self.self.smoothed_LC[bb]
 
     def gettime_phased(self):
         return self.time_phased
         
     #--------------------------------------------------#
 
-    def select_transit_smooth(self, selection):
-    
+    def select_transit_smooth(self, selection: int, yh:float = 0.01):
         '''
-        Funcao para selecionar o transito desejado
+        Funcao para selecionar o transito desejado e calcular a mediana 
+        da curva de luz para ajustar trânsitos que ficam "tortos" em relação
+        ao ponto 1 de luminosidade
         selection :: número do transito selecionado
         '''   
-
         i = selection
-        
-        lc = []
-        t = []
-        
-        # for i in tran_selec:
-        lc = numpy.append(lc, self.n_f_split[i])
-        t = numpy.append(t, (self.t_split[i]+self.porb*24*i)/24+self.x0)
-        
-        phase = (t % self.porb)/ self.porb
-        jj = numpy.argsort(phase)
-        ff = phase[jj]
 
-        self.smoothed_LC = scipy.ndimage.filters.uniform_filter(lc[jj], size = 10) # equivalente ao smooth do idl com edge_truncade
+        self.smoothed_LC = scipy.ndimage.filters.uniform_filter(self.modelo.transit_list[i]["flux"], size = 10) # equivalente ao smooth do idl com edge_truncade
 
-        x = phase[jj]
+        x = self.modelo.transit_list[i]["time"].jd
         y = 1 - self.smoothed_LC
-        yh = 0.002
 
         kk = numpy.where(y >= yh)
 
@@ -207,11 +196,24 @@ class Tratamento :
         x2 = max(x[kk])
         fa0 = (x1 + x2)/ 2 # valor central dos transitos em fase
 
-        self.time_phased = (ff - fa0)*self.porb*24
+        self.time_phased = (x - fa0)*24
 
-        bb = numpy.where((self.time_phased >= min(self.ts_model)) & (self.time_phased <= max(self.ts_model)))
-        
-        return self.time_phased[bb], self.smoothed_LC[bb]
+        n = int(len(self.smoothed_LC) * (10/100))  # número de pontos no início e no fim para tirar a mediana
+
+        # Calculando as medianas nos dois extremos
+        mediana_inicio = numpy.median(self.smoothed_LC[:n])
+        mediana_fim = numpy.median(self.smoothed_LC[-n:])
+
+        # Criando a reta entre esses dois pontos
+        reta = numpy.linspace(mediana_inicio, mediana_fim, len(self.smoothed_LC))
+
+        # Subtraindo a tendência da curva original
+        detrended_LC = self.smoothed_LC / reta
+
+        self.detrended_LC = detrended_LC / numpy.median(detrended_LC)
+
+        return self.time_phased,  self.detrended_LC
+
 
     def select_transit_smooth_simple(self, selection): 
         i = selection

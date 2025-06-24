@@ -15,17 +15,18 @@ import scipy
 from Planet.Planeta import Planeta
 from Star.Estrela import Estrela #estrela e eclipse:: extensões de programas auxiliares que realizam o cálculo da curva de luz.
 from Planet.Eclipse import Eclipse
-import numpy
+import numpy as np
 import matplotlib.pyplot as plt
 from lightkurve import search_lightcurve
 import pandas as pd 
 import os
+import pyvo
+
 
 class Modelo:
-
     '''
     parâmetro estrela :: classe estrela 
-     parâmetro eclipse :: classe Eclipse
+    parâmetro eclipse :: classe Eclipse
     parâmetro missão :: Missão selecionada para a coleta da estrela (KEPLER, K2 OU TESS)
     '''
     def __init__(self,estrela: Estrela, eclipse: Eclipse, mission):
@@ -44,6 +45,7 @@ class Modelo:
         self.manchas: List[Estrela.Mancha] = estrela.manchas
 
         #coletando objetos de Eclipse
+        self.planet_name = eclipse.planeta_.getPlanetName()
         self.raioPlan = eclipse.planeta_.getRaioPlan()
         self.R_jup = eclipse.planeta_.getRplanJup()
         self.AU = eclipse.planeta_.getSemiEixo() #semieixo em UA
@@ -57,94 +59,105 @@ class Modelo:
             self.lua = eclipse.planeta_.luas[0] # por enquanto apenas uma lua 
 
         #variaveis que serao retornadas a partir da função rd_data
-        self.time = 0.
-        self.flux = 0.
-        self.flux_err = 0.
+        self.lightcurve_collection = []
 
-
-    def rd_data(self,plot,save_data):
-                
-        ''' 
-        Funcao criada para acessar os dados de curva de luz de estrelas e extrair o tempo e fluxo. 
-        
-        lightkurve packeage:: utilizado para abrir as curvas de Luz do Kepler e
-        também abrir curva de luz do TESS/ curvas de luz em geral
-        Documentação:: https://docs.lightkurve.org/api/index.html documentação do uso do lightkurve
-        
-        outputs esperados:: time, flux 
-        
-        plot = 1 (plota a curva de luz, para não plotar basta digitar qualquer valor)
-        save_data = 1 plota a curva de luz(para não plotar, basta digitar qualquer valor)
+    def rd_data(self):
         '''
-    ##--------------------------------------------------------------------------------------------------------------------------------------------------##
-    
-        # utiiza-se o PDCSAP_FLUX porque será realizado a análise no trânsito.
-        lc = search_lightcurve(self.star_name, cadence = self.cadence, mission = self.mission).download_all()
-        time = [] # time = array com os dados de tempo
-        flux = [] # flux = array com os dados de fluxo
-        flux_err = [] # flux_err = array com os dados de erro do fluxo
-        time_temp = [] #_variavel temporaria
-        flux_temp = []
-        flux_err_temp = []
+        Function responsible for accessing the data from the star's light curve and extract the total light curve.
 
-        for i in range(0, len(lc)-1):
-            try:
-                flux_temp.append(lc[i].sap_flux)
-                flux_err_temp.append(lc[i].sap_flux_err)
-                time_temp.append(lc[i].time.to_value('bkjd','float'))
-            except:
-                pass
+        Returns a lightkurve.lightcurve.KeplerLightCurve object in case a curve is found; None if an error occurs.
+        -----------------------------------------------------------------------------------------------------------
+        Função responsável por acessar os dados da curva de luz da estrela e extrair a curva de luz total.
 
-        for i in range(0, len(flux_temp)):   
-            
-            # Limita os índices aos valores de tempo lidos
-            flux_temp[i] = flux_temp[i][0:time_temp[i].size]
-            flux_err_temp[i] = flux_err_temp[i][0:time_temp[i].size]
+        Retorna um objeto lightkurve.lightcurve.KeplerLightCurve caso ache a curva; None caso ocorra algum erro.
+        '''
+        try:
+            lc_collection = search_lightcurve(self.star_name, cadence = self.cadence, mission = self.mission).download_all()
+
+            # **Filter data with flag = 0**
+            # Iterate through the collection and filter each light curve
+            filtered_lcs = []
+            for light_curve in lc_collection:
+                filtered_lcs.append(light_curve[light_curve.quality == 0])
+
+            # Normalize each filtered light curve before stitching
+            normalized_lcs = []
+            for light_curve in filtered_lcs:
+                # Normalize each light curve individually
+                normalized_lcs.append(light_curve.normalize())
+
+            # Stitch the normalized light curves into a single LightCurve object
+            if normalized_lcs:
+                stitched_lc = normalized_lcs[0]
+                for i in range(1, len(normalized_lcs)):
+                    # Append the normalized light curves
+                    stitched_lc = stitched_lc.append(normalized_lcs[i])
+
+            self.lightcurve_collection = stitched_lc
+            return stitched_lc
+        except Exception as e:
+            print(f"Error: {e}")
+            return None
         
-            # Elimina todos os valores NaN (Not a Number) dos dados
-            time_temp[i] = time_temp[i][~numpy.isnan(flux_err_temp[i])]
-            flux_temp[i] = flux_temp[i][~numpy.isnan(flux_err_temp[i])]
-            flux_err_temp[i] = flux_err_temp[i][~numpy.isnan(flux_err_temp[i])]
+    def get_transit_parameters(self):
+        '''
+        Função responsável por obter os parâmetros necessários para cortar os trânsitos:
+
+        Period: Periodo do trânsito em dias
+        Epoch: Época do primeiro trânsito em BJD
+        Duration: Duração do trânsito em dias
+        '''
+        # Access to ExoplanetArchive API
+        service = pyvo.dal.TAPService("https://exoplanetarchive.ipac.caltech.edu/TAP")
+
+        # Se quiser procurar por um planeta:
+        target_planet = self.planet_name
+        query = f"SELECT * FROM pscomppars WHERE LOWER(pl_name) LIKE '%{target_planet.lower()}%'"
+
+        results = service.search(query)
+
+        # Verifying if there are results
+        if len(results) == 0:
+            return None
         
-            # Normaliza cada quarter
-            flux_err_temp[i] = flux_err_temp[i]/ abs(numpy.median(flux_temp[i]))
-            flux_temp[i] = flux_temp[i]/ abs(numpy.median(flux_temp[i]))
+        self.period = results[0].get("pl_orbper")         # dias
+        self.epoch = results[0].get("pl_tranmid")         # BJD
+        self.duration = results[0].get("pl_trandur")/24   # dias
 
-        for i in range(0, len(flux_temp)):
-            flux = numpy.append(flux, flux_temp[i])
-            time = numpy.append(time, time_temp[i])
-            flux_err = numpy.append(flux_err,flux_err_temp[i])
-        
-        #plot da curva de luz completa
-        if plot == (1):
-            plt.rcParams['figure.figsize'] = 10,4
-            graf1, ax = plt.subplots()
+        return self.period, self.epoch, self.duration
 
-            ax.set_xlabel('Time (BJD - 2454833)')
-            ax.set_ylabel('Normalized Flux')
+    def get_transits(self):
+        '''
+        Função responsável por dividir os trânsitos.
 
-            ax.set_title("Light Curve - " + self.star_name)
-            ax.set_xlim(min(time), max(time))
-            ax.set_ylim(min(flux), max(flux))
+        Retorna uma lista dos trânsitos divididos.
+        '''
+        self.get_transit_parameters()
 
-            time = numpy.array(time)
-            flux = numpy.array(flux)
-            flux_err = numpy.array(flux_err)
+        end_time = 0
+        nn = 0
+        self.transit_list = []
+        while(end_time < self.lightcurve_collection[-1]["time"].jd):
+            # Plot the light curve around the nth transit
+            start_time = self.epoch - 2*self.duration + nn * self.period
+            end_time = self.epoch + 2* self.duration + nn * self.period
 
-            if numpy.any(numpy.isnan(flux_err)) or numpy.any(numpy.isinf(flux_err)):
-                print("Erro: flux_err contém NaN ou inf")
-                    
-            ax.errorbar(time, flux, yerr = flux_err, fmt = '.k', capsize = 0,alpha = 0.5)
-            
-        #salva os dados em um arquivo .dat
-        if save_data == 1:
-            numpy.savetxt('%s_LC.dat'%self.star_name, numpy.c_[(time, flux, flux_err)])
+            # Select out-of-transit data for normalization
+            out_of_transit_flux = self.lightcurve_collection.flux[np.where((self.lightcurve_collection.time.jd  > start_time) & (self.lightcurve_collection.time.jd < start_time + 0.05))]
 
-        self.time = time 
-        self.flux = flux
-        self.flux_err = flux_err
+            # Normalize the flux using median of out-of-transit data
+            normalized_lc = self.lightcurve_collection.copy() # creating a copy of the lc to avoid modifying the original
+            normalized_lc.flux = self.lightcurve_collection.flux / np.nanmedian(out_of_transit_flux)
 
-        return self.time, self.flux, self.flux_err
+            # Filter the data to focus on the transit
+            transit_indices = ((normalized_lc.time.jd >= start_time) & (normalized_lc.time.jd <= end_time))
+
+            if normalized_lc[transit_indices]["flux"].size != 0:
+                self.transit_list.append(normalized_lc[transit_indices])
+
+            nn += 1
+
+        return self.transit_list
 
     def rd_data_csv(self, path):
         lc = pd.read_csv(path) 
@@ -185,7 +198,7 @@ class Modelo:
         flux = self.flux
 
         phase = (time % porb)/ porb
-        jj = numpy.argsort(phase)
+        jj = np.argsort(phase)
         ff = phase[jj]
 
         smoothed_LC = scipy.ndimage.filters.uniform_filter(flux[jj], size = 100) # equivalente ao smooth do idl com edge_truncade
@@ -195,15 +208,15 @@ class Modelo:
         y = 1 - smoothed_LC
         yh = 0.002
 
-        kk = numpy.where(y >= yh)
+        kk = np.where(y >= yh)
 
         x1 = min(x[kk])
         x2 = max(x[kk])
         fa0 = (x1 + x2)/ 2 # valor central dos transitos em fase
 
-        self.x0 = (numpy.fix(time[0] / porb) + fa0) * porb # tempo central do primeiro transito
+        self.x0 = (np.fix(time[0] / porb) + fa0) * porb # tempo central do primeiro transito
         
-        self.nt = numpy.fix(max(time - time[0])/ porb) + 1 # numero de transitos possiveis
+        self.nt = np.fix(max(time - time[0])/ porb) + 1 # numero de transitos possiveis
 
         #plot da curva de luz completa
         if plot == 1:
@@ -258,14 +271,14 @@ class Modelo:
         if self.u2 == 999:
             self.u2 = 0.0
         
-        self.wl = numpy.zeros((self.n, self.n))
-        x = numpy.arange(self.n/2-self.n, self.n - self.n/2, 1)
+        self.wl = np.zeros((self.n, self.n))
+        x = np.arange(self.n/2-self.n, self.n - self.n/2, 1)
         
         for j in range (0, self.n):     
-            z = numpy.sqrt(x**2 + (j - self.n/2.)**2)
-            kk = numpy.where(z <= self.r)
+            z = np.sqrt(x**2 + (j - self.n/2.)**2)
+            kk = np.where(z <= self.r)
             if kk[0].size > 0:
-                    m = numpy.cos(numpy.arcsin(z[kk]/self.r))
+                    m = np.cos(np.arcsin(z[kk]/self.r))
                     self.wl[kk, j] = self.mx*(1 - self.u1*(1 - m) - self.u2*(1 - m)**2)
         
         data = self.wl[:,int(self.n/2)]
@@ -313,7 +326,7 @@ class Modelo:
         Ny1 = estrela_1.getNy()
         raioEstrelaPixel1 = estrela_1.getRaioStar() #coleta raio da estrela em pixel 
         # elf, semiEixoUA, raioPlanJup, periodo, anguloInclinacao, ecc, anom, raioStar,mass
-        planeta_1 = Planeta(self.AU, self.R_jup, self.porb, self.inc, self.ecc, self.anom, self.r_Sun, self.mass)
+        planeta_1 = Planeta(self.AU, self.R_jup, self.porb, self.inc, self.ecc, self.anom, self.r_Sun, self.mass, self.planet_name)
 
         # self, Nx, Ny, raio_estrela_pixel, estrela_manchada: Estrela, planeta_: Planeta):
         eclipse1 = Eclipse(Nx1, Ny1, raioEstrelaPixel1, estrela_1, planeta_1)  #cria o objeto eclipse
@@ -322,14 +335,14 @@ class Modelo:
 
         eclipse1.criarEclipse(anim = False, plot = False)
 
-        self.lc_model = numpy.array(eclipse1.getCurvaLuz())
-        self.ts_model = numpy.array(eclipse1.getTempoHoras())
+        self.lc_model = np.array(eclipse1.getCurvaLuz())
+        self.ts_model = np.array(eclipse1.getTempoHoras())
         
         return self.lc_model, self.ts_model
 
     #--------------------------------------------------#
     def retornaParametros(self):
-        return self.u1,self.u2,self.porb,self.time,self.flux,self.flux_err,self.raioPlan,self.AU,self.inc, self.x0, self.nt,self.ts_model, self.mass
+        return self.u1,self.u2,self.porb,self.raioPlan,self.AU,self.inc,self.ts_model, self.mass
     
     def setTime(self,time):
         self.time = time
