@@ -159,6 +159,11 @@ class Modelo:
 
         return self.transit_list
 
+    def get_transits_csv(): 
+        self.transit_list = []
+        
+        return
+
     def rd_data_csv(self, path):
         lc = pd.read_csv(path) 
 
@@ -171,9 +176,9 @@ class Modelo:
             self.flux.append(row[1])
             self.flux_err.append(row[2])
 
-        self.time = numpy.array(self.time)
-        self.flux = numpy.array(self.flux)
-        self.flux_err = numpy.array(self.flux_err)
+        self.time = np.array(self.time)
+        self.flux = np.array(self.flux)
+        self.flux_err = np.array(self.flux_err)
         
         return self.time, self.flux, self.flux_err
  
