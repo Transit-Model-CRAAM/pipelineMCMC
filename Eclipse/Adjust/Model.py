@@ -167,20 +167,26 @@ class Modelo:
     def rd_data_csv(self, path):
         lc = pd.read_csv(path) 
 
-        self.time = [] # time = array com os dados de tempo
-        self.flux = [] # flux = array com os dados de fluxo
-        self.flux_err = [] # flux_err = array com os dados de erro do fluxo
+        lc = lc.rename(columns={"normal_flux": "flux"})
 
-        for row in lc.values:
-            self.time.append(row[0])
-            self.flux.append(row[1])
-            self.flux_err.append(row[2])
+        self.transit_list=[lc]
 
-        self.time = np.array(self.time)
-        self.flux = np.array(self.flux)
-        self.flux_err = np.array(self.flux_err)
+        return self.transit_list
+
+        # self.time = [] # time = array com os dados de tempo
+        # self.flux = [] # flux = array com os dados de fluxo
+        # self.flux_err = [] # flux_err = array com os dados de erro do fluxo
+
+        # for row in lc.values:
+        #     self.time.append(row[0])
+        #     self.flux.append(row[1])
+        #     self.flux_err.append(row[2])
+
+        # self.time = np.array(self.time)
+        # self.flux = np.array(self.flux)
+        # self.flux_err = np.array(self.flux_err)
         
-        return self.time, self.flux, self.flux_err
+        # return self.time, self.flux, self.flux_err
  
 
     def det_x0(self, plot):
