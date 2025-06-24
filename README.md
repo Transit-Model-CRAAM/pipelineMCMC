@@ -15,7 +15,18 @@ Com o Python instalado na sua máquina, abra o prompt de comando (cmd) e insira 
 
 With Python installed in your machine, open the command prompt (cmd) and type the following commands to install each library. It may be required to add "python" or "py3" before the "pip install" (Ex.: py3 pip install numpy) depending on how Python is installed in your computer.
 
+## Preparing multitrheading environment 
+
+[ 🇧🇷 ] Para habilitar o paralelismo de código (multithreading) no ECLIPSE, é necessário seguir o tutorial disponível em: 
+
+https://github.com/Transit-Model-CRAAM/pipelineMCMC/tree/feat/new-transit-method/Eclipse/scripts#readme
+
+[ 🇺🇸 ] To enable code parallelism (multithreading) in ECLIPSE, you must follow the tutorial available at:
+
+https://github.com/Transit-Model-CRAAM/pipelineMCMC/blob/feat/new-transit-method/Eclipse/scripts/README-EN.md
+
 *** 
+
 ## How to install 
 
 [ 🇧🇷 ] Para instalar todas as bibliotecas de uma vez, abra o cmd dentro da pasta onde os arquivos foram extraídos e digite o comando ``` pip install -r requirements.txt --user ```.
