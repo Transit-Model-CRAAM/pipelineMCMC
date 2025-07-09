@@ -2,7 +2,7 @@ from Planet.Moon import Moon
 
 class Planeta: 
 
-    def __init__(self, semiEixoUA, raioPlanJup, periodo, anguloInclinacao, ecc, anom, raioStar,mass): 
+    def __init__(self, semiEixoUA, raioPlanJup, periodo, anguloInclinacao, ecc, anom, raioStar, mass, name): 
         self.luas = []
 
         self.semiEixoUA = semiEixoUA
@@ -12,6 +12,7 @@ class Planeta:
         self.ecc = ecc
         self.anom = anom 
         self.mass = mass * (1.898 *(10**27)) #passar para gramas por conta da constante G
+        self.name = name
         
         # Calculos
         self.semiEixoRaioStar = self.calcSemEixoRaioStar(raioStar)
@@ -49,6 +50,9 @@ class Planeta:
 
     def getEccAnom(self):
         return self.ecc, self.anom 
+    
+    def getPlanetName(self):
+        return self.name
 
     ### Adding Moons in Planet 
     def addLua(self,lua: Moon): 
