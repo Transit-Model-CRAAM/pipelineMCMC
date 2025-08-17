@@ -245,8 +245,6 @@ class Eclipse:
                 for lua in self.planeta_.luas: 
                     ppMoon = lua.getppMoon(self.tamanhoMatriz)
                     tamMoon = len(ppMoon)
-                    
-                    print("LUA:::::",lua.name)
                     if (tamPp > tamMoon):
                         rangeloop = pp
                     else: 
