@@ -219,7 +219,7 @@ class Tratamento :
         try:
             i = selection
 
-            self.smoothed_LC = scipy.ndimage.filters.uniform_filter(self.modelo.transit_list[i]["flux"], size = 10) # equivalente ao smooth do idl com edge_truncade
+            self.smoothed_LC = scipy.ndimage.filters.uniform_filter(self.modelo.transit_list[i]["flux"], size = 1) # equivalente ao smooth do idl com edge_truncade
 
             x = self.modelo.transit_list[i]["time"].jd
             y = 1 - self.smoothed_LC
