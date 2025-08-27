@@ -11,4 +11,4 @@ PyAstronomy==0.18.1
 pytz==2022.7.1
 requests==2.31.0
 scipy==1.10.0
-opencv-python==4.6.0
+opencv-python==4.6.0.66
