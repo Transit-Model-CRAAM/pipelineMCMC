@@ -213,3 +213,28 @@ class Tratamento :
         self.detrended_LC = detrended_LC / numpy.median(detrended_LC)
 
         return self.time_phased,  self.detrended_LC
+
+
+    def select_transit_smooth_simple(self, selection, yh:float = 0.01): 
+        try:
+            i = selection
+
+            self.smoothed_LC = scipy.ndimage.filters.uniform_filter(self.modelo.transit_list[i]["flux"], size = 1) # equivalente ao smooth do idl com edge_truncade
+
+            x = self.modelo.transit_list[i]["time"].jd
+            y = 1 - self.smoothed_LC
+
+            kk = numpy.where(y >= yh)
+
+            x1 = min(x[kk])
+            x2 = max(x[kk])
+            fa0 = (x1 + x2)/ 2 # valor central dos transitos em fase
+
+            self.time_phased = (x - fa0)*24
+
+            
+            return self.time_phased,  self.smoothed_LC
+        except:
+            print("Centro do trânsito não foi encontrado: Altere o valor do parâmetro yh para um mais adequado à profundidade do trânsito!")
+
+            return None, None

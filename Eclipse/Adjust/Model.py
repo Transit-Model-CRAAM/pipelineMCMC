@@ -17,7 +17,9 @@ from Star.Estrela import Estrela #estrela e eclipse:: extensões de programas au
 from Planet.Eclipse import Eclipse
 import numpy as np
 import matplotlib.pyplot as plt
-from lightkurve import search_lightcurve
+from lightkurve import search_lightcurve, KeplerLightCurve
+import pandas as pd 
+import os
 import pyvo
 
 
@@ -154,6 +156,26 @@ class Modelo:
                 self.transit_list.append(normalized_lc[transit_indices])
 
             nn += 1
+
+        return self.transit_list
+
+    def get_transits_csv(): 
+        self.transit_list = []
+        
+        return
+
+    def rd_data_csv(self, path):
+        '''
+        Função que le um csv e retorna no frame da lib KeplerLightCurve
+        '''
+        lc = pd.read_csv(path) 
+
+        lc_lc = KeplerLightCurve(
+            time=lc["time"].values,
+            flux=lc["normal_flux"].values
+        )
+
+        self.transit_list=[lc_lc]
 
         return self.transit_list
 
