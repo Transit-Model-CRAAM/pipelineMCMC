@@ -1,3 +1,7 @@
+# Base branch: ```main```
+>[!IMPORTANT]
+>```main``` represents more stable version of the code
+
 # Pipeline MCMC
 
 [ 🇧🇷 ] Repositório com o projeto de programação para calcular a curva de luz de uma estrela com possíveis exoplanetas em sua órbita através de programação Python híbrida para programação C usando Pipeline em tempo de execução.
@@ -38,7 +42,6 @@ Caso a instalação dê algum problema, também é possível instalar individual
 In case the installation goes wrong, it's also possible to install each library individually using the commands below.
 
 
-
 MatPlotLib:  ``` pip install matplotlib ```
 
 NumPy: ``` pip install numpy ```
@@ -68,13 +71,13 @@ Kepler.py: ``` pip install kepler.py ```
 *** 
 ## How to run
 
-[ 🇧🇷 ] Para o uso da versão main.ipynb, recomenda-se o uso do Jupyter Notebook. Para instalá-lo, basta digitar no prompt de comando o seguinte comando:
+[ 🇧🇷 ] Para o uso da versão main.ipynb, recomenda-se o uso do ```Jupyter Notebook```. Para instalá-lo, basta digitar no prompt de comando o seguinte comando:
 
 ``` pip install notebook ```
 
 Para utilizá-lo, basta ir até a pasta onde está instalado o programa e digitar no clipboard "jupyter notebook".
 
-[ 🇺🇸 ] To use the main.ipynb version, it is recommended using the Jupyter Notebook. To install it, just type in the command prompt the following command:
+[ 🇺🇸 ] To use the main.ipynb version, it is recommended using the ```Jupyter Notebook```. To install it, just type in the command prompt the following command:
 
 ``` pip install notebook ```
 
