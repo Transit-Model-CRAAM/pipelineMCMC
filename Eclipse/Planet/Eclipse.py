@@ -445,6 +445,21 @@ class Eclipse:
         cbar = plt.colorbar(im, ax=ax1)
         cbar.set_label('Intensidade')
 
+        pos = ax1.get_position()
+
+        new_width = 0.27                # Fração da largura da figura (Ajustar caso preciso)
+        new_left = 0.5 - new_width / 2  # Centralizando horizontalmente
+
+        # Aplicando a nova posição
+        ax1.set_position([new_left, pos.y0, new_width, pos.height])
+
+        box = cbar.ax.get_position()
+        cbar.ax.set_position([
+            box.x0 - 0.1,   # Aumentar = mover pra esquerda / Diminuir = mover pra direita
+            box.y0,         # Manter posição vertical
+            box.width,      # Manter largura
+            box.height      # Manter altura
+        ])
 
         ax2.plot(self.tempoHoras, self.curvaLuz, label='Curva de Luz')
 
