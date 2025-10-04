@@ -105,12 +105,21 @@ class Estrela:
             script_path = os.path.join(dir_pai, 'scripts', 'func64.so')
             my_func = CDLL(script_path)
 
-        my_func.criaEstrela.restype = ndpointer(dtype=c_int, ndim=2, shape=(self.tamanhoMatriz,self.tamanhoMatriz))
-        estrelaMatriz = my_func.criaEstrela(self.tamanhoMatriz,self.tamanhoMatriz,self.tamanhoMatriz,c_float(self.raio),c_float(self.intensidadeMaxima),c_float(self.coeficienteHum),c_float(self.coeficienteDois))
+        # Cria a matriz estrela
+        my_func.criaEstrela.restype = POINTER(c_int)
+        estrela_ptr = my_func.criaEstrela(self.tamanhoMatriz,self.tamanhoMatriz,self.tamanhoMatriz,c_float(self.raio),c_float(self.intensidadeMaxima),c_float(self.coeficienteHum),c_float(self.coeficienteDois))
 
-        del my_func
+        # Transforma a matriz estrela em um objeto numpy
+        matrizEstrela = np.ctypeslib.as_array(estrela_ptr, shape=(self.tamanhoMatriz, self.tamanhoMatriz)).copy()
 
-        return estrelaMatriz
+        # Libera a memória alocada via malloc para a estrela
+        my_func.liberaEstrela.argtypes = [POINTER(c_int)]
+        my_func.liberaEstrela(estrela_ptr)
+
+        del estrela_ptr
+
+        return matrizEstrela
+    
         
     '''
     Ruidos podem ser Manchas ou Fáculas

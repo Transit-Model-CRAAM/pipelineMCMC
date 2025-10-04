@@ -37,6 +37,7 @@ from ctypes import *
 from numpy.ctypeslib import ndpointer
 import time
 import platform
+import gc
 
 
 class Eclipse:
@@ -89,8 +90,8 @@ class Eclipse:
     def criarLua(self, moon: Moon):
         moon.moonOrbit()
         self.planeta_.addLua(moon)
-
-    def criarEclipse(self, anim=True, plot=True):
+        
+    def criarEclipse(self, anim=True, plot=True, collect_garbage=True):
         '''
         Criação da classe eclipse, que retornará a curva de luz do trânsito do planeta ao redor da estrela
 
@@ -340,9 +341,10 @@ class Eclipse:
                 plt.ylabel('Brilho da estrela (fluxo normalizado)')
 
                 plt.show()
-
-        locals().clear  # Limpa qualquer possível sujeira de memória
-        del my_func
+                
+        # Libera memória de lixo que ficou alocado
+        if collect_garbage:
+            gc.collect()
 
     def addLua(self, rangeloop, xplan, yplan, raioPlanetaPixel, kk2, maxCurvaLuz, numAux, ims, ax1, ax2, fig, kk, my_func, plota, lua):
         em = self.getMatrizTransformada(self.estrela_matriz)
