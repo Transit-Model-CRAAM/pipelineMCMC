@@ -274,10 +274,13 @@ class Estrela:
     def getCadence(self):
         return self.cadence
 
-    def Plotar(self,tamanhoMatriz,estrela):
+    def Plotar(self,tamanhoMatriz,estrela, invert_yaxis: bool = False):
         Nx = tamanhoMatriz
         Ny = tamanhoMatriz
         plt.axis([0,Nx,0,Ny])
         plt.imshow(estrela,self.color)
-        plt.gca().invert_yaxis()  # Corrige o eixo Y invertido
+        
+        if invert_yaxis: 
+            plt.gca().invert_yaxis()  # Corrige o eixo Y invertido
+
         plt.show()
