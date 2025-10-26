@@ -30,6 +30,7 @@ from Planet.Planeta import Planeta
 from Misc.Verify import calculaLat
 # from keplerAux import keplerfunc  #biblioteca auxiliar caso a biblioteca kepler nao funcione
 import matplotlib.animation as animation
+import matplotlib.colors as mcolors
 # para o calculo de orbitas excentricas (pip install kepler)
 from kepler._core import solve
 import os
@@ -287,8 +288,18 @@ class Eclipse:
                             self.tamanhoMatriz, self.tamanhoMatriz)
 
                         plt.axis([0, self.Nx, 0, self.Ny])
-                        im = ax1.imshow(self.estrela_matriz*plan,
-                                        cmap="hot", animated=True, origin = "lower")
+
+                        cmap = plt.cm.get_cmap("hot").copy()
+                        cmap.set_over('white')  # valores acima de vmax ficam brancos
+
+                        # Normalização com vmax = intensidade máxima
+                        norm = mcolors.Normalize(vmin=0, vmax=self.estrela_.intensidadeMaxima * 1.2, clip=False)
+
+                        # Multiplica a máscara e aplica normalização
+                        image_to_plot = self.estrela_matriz * plan
+                        image_to_plot = np.where(image_to_plot > self.estrela_.intensidadeMaxima * 1.2, self.estrela_.intensidadeMaxima * 1.2+1, image_to_plot)
+
+                        im = ax1.imshow(image_to_plot, cmap=cmap, norm=norm, animated=True, aspect='equal')
 
                         # armazena na animação os pontos do grafico (em imagem)
                         ims.append([im])
@@ -374,8 +385,18 @@ class Eclipse:
                 plan = plan.reshape(self.tamanhoMatriz, self.tamanhoMatriz)
                 plt.axis([0, self.Nx, 0, self.Ny])
 
-                im = ax1.imshow(self.estrela_matriz*plan,
-                                cmap="hot", animated=True)
+                cmap = plt.cm.get_cmap("hot").copy()
+                cmap.set_over('white')  # valores acima de vmax ficam brancos
+
+                # Normalização com vmax = intensidade máxima
+                norm = mcolors.Normalize(vmin=0, vmax=self.estrela_.intensidadeMaxima * 1.2, clip=False)
+
+                # Multiplica a máscara e aplica normalização
+                image_to_plot = self.estrela_matriz * plan
+                image_to_plot = np.where(image_to_plot > self.estrela_.intensidadeMaxima * 1.2, self.estrela_.intensidadeMaxima * 1.2+1, image_to_plot)
+
+                im = ax1.imshow(image_to_plot, cmap=cmap, norm=norm, animated=True, aspect='equal')
+
                 # armazena na animação os pontos do grafico (em imagem)
                 ims.append([im])
                 numAux += 1
@@ -440,9 +461,28 @@ class Eclipse:
         return self.error
 
     def plot_anim(self, ax1, ax2, plan, fig, ims):
-        im = ax1.imshow(self.estrela_matriz*plan, cmap="hot", animated=True, origin = "lower")
+        cmap = plt.cm.get_cmap("hot").copy()
+        cmap.set_over('white')  # values above vmax will be white
 
-        cbar = plt.colorbar(im, ax=ax1)
+        norm = mcolors.Normalize(vmin=0, vmax=self.estrela_.intensidadeMaxima * 1.2, clip=False)
+
+        image_to_plot = self.estrela_matriz * plan
+        image_to_plot = np.where(
+            image_to_plot > self.estrela_.intensidadeMaxima * 1.2,
+            self.estrela_.intensidadeMaxima * 1.2 + 1,
+            image_to_plot
+        )
+
+        im = ax1.imshow(
+            image_to_plot,
+            cmap=cmap,
+            norm=norm,
+            animated=True,
+            origin='lower',
+            aspect='equal'
+        )
+
+        cbar = plt.colorbar(im, ax=ax1, extend='max')
         cbar.set_label('Intensidade')
 
         pos = ax1.get_position()

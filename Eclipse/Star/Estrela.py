@@ -30,6 +30,7 @@ import platform
 import os
 import cv2 as cv
 import numpy as np
+import matplotlib.colors as mcolors
 
 class Estrela:
     '''
@@ -278,7 +279,14 @@ class Estrela:
         Nx = tamanhoMatriz
         Ny = tamanhoMatriz
         plt.axis([0,Nx,0,Ny])
-        plt.imshow(estrela,self.color)
+
+        # Criação do colormap
+        cmap = plt.cm.get_cmap(self.color).copy()
+        cmap.set_over('white')
+
+        # Normalizar de 0 a intensidade máxima
+        norm = mcolors.Normalize(vmin=0, vmax=self.intensidadeMaxima*1.2, clip=False)
+        plt.imshow(estrela, cmap=cmap, norm=norm)
         
         if invert_yaxis: 
             plt.gca().invert_yaxis()  # Corrige o eixo Y invertido
