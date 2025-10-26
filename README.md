@@ -1,6 +1,8 @@
 # Base branch: ```main```
 >[!IMPORTANT]
 >```main``` represents more stable version of the code
+> 
+> For a better development experience, we recommend using [VSCode](https://code.visualstudio.com/download), with the extension for [jupyter notebook](https://marketplace.visualstudio.com/items?itemName=ms-toolsai.jupyter), [c and gcc](https://marketplace.visualstudio.com/items?itemName=ms-vscode.cpptools)
 
 # Pipeline MCMC
 
@@ -25,9 +27,13 @@ With Python installed in your machine, open the command prompt (cmd) and type th
 
 https://github.com/Transit-Model-CRAAM/pipelineMCMC/tree/feat/new-transit-method/Eclipse/scripts#readme
 
+Lembre-se de possuir instalado o ambiente para programação em C (C e gcc)
+
 [ 🇺🇸 ] To enable code parallelism (multithreading) in ECLIPSE, you must follow the tutorial available at:
 
 https://github.com/Transit-Model-CRAAM/pipelineMCMC/blob/feat/new-transit-method/Eclipse/scripts/README-EN.md
+
+Remember to have the C programming environment installed (C and gcc)
 
 *** 
 
@@ -96,13 +102,6 @@ To use it, go to the folder where the software is installed and type in the clip
          </sub>
        </a>
      </td>
-  </tr>
-  </table>
- 
- ## Co - authors
-
- <table>
-   <tr>
      <td align="center">
        <a href="https://github.com/felipexpinho">
          <img src="https://avatars.githubusercontent.com/u/70541163?v=4" height="auto" width="100" style="corner-radius:50%" alt="Foto de perfil do GitHub do Pinho"/><br>
@@ -111,5 +110,5 @@ To use it, go to the folder where the software is installed and type in the clip
          </sub>
        </a>
      </td>
-    </tr>
- </table>
+  </tr>
+  </table>
