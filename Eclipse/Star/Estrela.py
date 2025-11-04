@@ -32,6 +32,7 @@ import cv2 as cv
 import numpy as np
 import matplotlib.colors as mcolors
 
+
 class Estrela:
     '''
     A classe estrela recebe como objeto o raio, intensidade maxima, coeficientes de escurecimento de limbo.
@@ -47,21 +48,20 @@ class Estrela:
     :parâmetro tamanhoMatriz: Tamanho da matriz em que será construída a estrela 
     :parâmetro estrela: Estrela construida com os coeficientes de escurecimento de limbo
     '''
-   
 
-    def __init__(self,raio,raioSun,intensidadeMaxima,coeficienteHum,coeficienteDois,tamanhoMatriz):
-        
-        self.raio = raio # em pixel
-        self.raioSun = raioSun * 696340 # em relacao ao raio do Sol
+    def __init__(self, raio, raioSun, intensidadeMaxima, coeficienteHum, coeficienteDois, tamanhoMatriz):
+
+        self.raio = raio  # em pixel
+        self.raioSun = raioSun * 696340  # em relacao ao raio do Sol
         self.intensidadeMaxima = intensidadeMaxima
         self.coeficienteHum = coeficienteHum
         self.coeficienteDois = coeficienteDois
         self.tamanhoMatriz = tamanhoMatriz
         self.temperaturaEfetiva = 4875.0
 
-        #self.colors = ["gray","pink","hot"]    
+        #self.colors = ["gray","pink","hot"]
         #start = time.time()
-        
+
         self.estrelaMatriz = self.criaEstrela()
         self.Nx = self.tamanhoMatriz
         self.Ny = self.tamanhoMatriz
@@ -69,22 +69,49 @@ class Estrela:
 
         self.manchas: List[Estrela.Mancha] = []
         self.faculas: List[Estrela.Facula] = []
-    
-    class Mancha: 
+
+    class Mancha:
         def __init__(self, intensidade, raio, latitude, longitude):
-            self.intensidade = intensidade # em relacao a intensidade da estrela (menor que 1)
-            self.raio = raio # em relacao ao raio da estrela
-            self.latitude = latitude 
+            # em relacao a intensidade da estrela (menor que 1)
+            self.intensidade = intensidade
+            self.raio = raio  # em relacao ao raio da estrela
+            self.latitude = latitude
             self.longitude = longitude
 
     class Facula:
         def __init__(self, intensidade, raio, latitude, longitude):
-            self.intensidade = intensidade # em relacao a intensidade da estrela (maior que 1)
-            self.raio = raio # em relacao ao raio da estrela
-            self.latitude = latitude 
+            # em relacao a intensidade da estrela (maior que 1)
+            self.intensidade = intensidade
+            self.raio = raio  # em relacao ao raio da estrela
+            self.latitude = latitude
             self.longitude = longitude
 
-    def criaEstrela(self): 
+    def verificaCoeficientesDeLimbo(self):
+        if self.coeficienteHum > 0:
+            if not (
+                self.coeficienteHum + self.coeficienteDois < 1
+                and self.coeficienteHum + 2 * self.coeficienteDois > 0
+            ):
+                raise ValueError(
+                    f"Escurecimento de limbo detectado. Coeficientes inválidos: u1={self.coeficienteHum}, u2={self.coeficienteDois}. "
+                    "É preciso que os coeficientes satisfaçam as seguintes regras: u1>0, u1+2*u2>0 e u1+u2<1."
+                )
+        elif self.coeficienteHum < 0:
+            if not (
+                self.coeficienteHum + self.coeficienteDois > -1
+                and self.coeficienteHum + 2 * self.coeficienteDois < 0
+            ):
+                raise ValueError(
+                    f"Abrilhantamento de limbo detectado. Coeficientes inválidos: u1={self.coeficienteHum}, u2={self.coeficienteDois}. "
+                    "É preciso que os coeficientes satisfaçam as seguintes regras: u1<0, u1+2*u2<0 e u1+u2>-11."
+                )
+        else:
+            raise ValueError(
+                f"Coeficiente u1 não pode ser 0."
+            )
+
+    def criaEstrela(self):
+        self.verificaCoeficientesDeLimbo()
         # Obter o caminho absoluto do diretório atual
         dir_atual = os.path.dirname(os.path.abspath(__file__))
 
@@ -92,14 +119,14 @@ class Estrela:
         dir_pai = os.path.dirname(dir_atual)
 
         # Verifica o SO e se o Python é 32 ou 64 bit
-        if(platform.system() == "Windows"):
-            if(platform.architecture()[0] == "32bit"):
+        if (platform.system() == "Windows"):
+            if (platform.architecture()[0] == "32bit"):
                 script_path = os.path.join(dir_pai, 'scripts', 'func32.dll')
-                my_func = WinDLL("a", winmode = 0x8)
-            elif(platform.architecture()[0] == "64bit"):
+                my_func = WinDLL("a", winmode=0x8)
+            elif (platform.architecture()[0] == "64bit"):
                 script_path = os.path.join(dir_pai, 'scripts', 'func64.dll')
-                my_func = WinDLL(script_path, winmode = 0x8)
-        elif(platform.system() == "Darwin"):
+                my_func = WinDLL(script_path, winmode=0x8)
+        elif (platform.system() == "Darwin"):
             script_path = os.path.join(dir_pai, 'scripts', 'func64.dylib')
             my_func = cdll.LoadLibrary(script_path)
         else:
@@ -108,10 +135,12 @@ class Estrela:
 
         # Cria a matriz estrela
         my_func.criaEstrela.restype = POINTER(c_int)
-        estrela_ptr = my_func.criaEstrela(self.tamanhoMatriz,self.tamanhoMatriz,self.tamanhoMatriz,c_float(self.raio),c_float(self.intensidadeMaxima),c_float(self.coeficienteHum),c_float(self.coeficienteDois))
+        estrela_ptr = my_func.criaEstrela(self.tamanhoMatriz, self.tamanhoMatriz, self.tamanhoMatriz, c_float(
+            self.raio), c_float(self.intensidadeMaxima), c_float(self.coeficienteHum), c_float(self.coeficienteDois))
 
         # Transforma a matriz estrela em um objeto numpy
-        matrizEstrela = np.ctypeslib.as_array(estrela_ptr, shape=(self.tamanhoMatriz, self.tamanhoMatriz)).copy()
+        matrizEstrela = np.ctypeslib.as_array(estrela_ptr, shape=(
+            self.tamanhoMatriz, self.tamanhoMatriz)).copy()
 
         # Libera a memória alocada via malloc para a estrela
         my_func.liberaEstrela.argtypes = [POINTER(c_int)]
@@ -120,87 +149,90 @@ class Estrela:
         del estrela_ptr
 
         return matrizEstrela
-    
-        
+
     '''
     Ruidos podem ser Manchas ou Fáculas
     '''
-    def criaRuidos(self, ruidos): 
+
+    def criaRuidos(self, ruidos):
         for ruido in ruidos:
-            raio_mancha_pixel = self.raio * ruido.raio # raio em funcao do raio da estrela em pixels
+            # raio em funcao do raio da estrela em pixels
+            raio_mancha_pixel = self.raio * ruido.raio
 
-            #coordenadas de posicionamento da mancha em graus
-            
-            degreeToRadian = np.pi/180. #A read-only variable containing the floating-point value used to convert degrees to radians.
-            latitudeMancha  = ruido.latitude * degreeToRadian 
-            longitudeMancha =  ruido.longitude * degreeToRadian
+            # coordenadas de posicionamento da mancha em graus
 
-            #posicao da mancha em pixels em relacao ao centro da estrela
-            ys = self.raio*np.sin(latitudeMancha)  
+            # A read-only variable containing the floating-point value used to convert degrees to radians.
+            degreeToRadian = np.pi/180.
+            latitudeMancha = ruido.latitude * degreeToRadian
+            longitudeMancha = ruido.longitude * degreeToRadian
+
+            # posicao da mancha em pixels em relacao ao centro da estrela
+            ys = self.raio*np.sin(latitudeMancha)
             xs = self.raio*np.cos(latitudeMancha)*np.sin(longitudeMancha)
-            anguloHelio = np.arccos(np.cos(latitudeMancha)*np.cos(longitudeMancha))
+            anguloHelio = np.arccos(
+                np.cos(latitudeMancha)*np.cos(longitudeMancha))
 
             # efeito de projecao pela mancha estar a um anguloHeliocentrico do centro da estrela - elipcidade
-            yy = ys + self.Ny/2 # posicao em pixel com relacao à origem da matriz
-            xx = xs + self.Nx/2 # posicao em pixel com relacao à origem da matriz
+            yy = ys + self.Ny/2  # posicao em pixel com relacao à origem da matriz
+            xx = xs + self.Nx/2  # posicao em pixel com relacao à origem da matriz
 
             kk = np.arange(self.Ny * self.Nx)
             vx = kk-self.Nx*np.int64(1.*kk/self.Nx) - xx
             vy = kk/self.Ny - yy
 
             # angulo de rotacao da mancha
-            anguloRot=np.abs(np.arctan(ys/xs)) # em radianos
+            anguloRot = np.abs(np.arctan(ys/xs))  # em radianos
             if latitudeMancha*longitudeMancha > 0:
                 anguloRot = -anguloRot
             elif latitudeMancha * longitudeMancha == 0:
                 anguloRot = 0
 
-            ii, = np.where((((vx*np.cos(anguloRot)-vy*np.sin(anguloRot))/np.cos(anguloHelio))**2+(vx*np.sin(anguloRot)+vy*np.cos(anguloRot))**2) < raio_mancha_pixel**2)
-        
+            ii, = np.where((((vx*np.cos(anguloRot)-vy*np.sin(anguloRot))/np.cos(anguloHelio))
+                           ** 2+(vx*np.sin(anguloRot)+vy*np.cos(anguloRot))**2) < raio_mancha_pixel**2)
+
             spot = np.zeros(self.Ny * self.Nx) + 1
-                
+
             spot[ii] = ruido.intensidade
             spot = spot.reshape([self.Ny, self.Nx])
-    
-            self.estrelaMatriz= self.estrelaMatriz * spot
 
-        return self.estrelaMatriz 
-    
-    #######  Inserção de manchas
-    def addMancha(self, mancha: Mancha): 
+            self.estrelaMatriz = self.estrelaMatriz * spot
+
+        return self.estrelaMatriz
+
+    # Inserção de manchas
+    def addMancha(self, mancha: Mancha):
         '''
         Função onde são criadas as Manchas da estrela. Todos os parâmetros 
         são relacionados ao tamanho da estrela, podendo o usuário escolher valores 
         ou selecionar a opção default.
         '''
-        if (mancha.intensidade > 1) : 
+        if (mancha.intensidade > 1):
             print("O valor da intensidade da Mancha deve ser menor que 1.")
-            return 
+            return
 
         self.manchas.append(mancha)
 
     def criaEstrelaManchada(self):
         self.criaRuidos(self.manchas)
 
-    #######  Inserção de Fáculas
-    def addFacula(self, facula: Facula): 
+    # Inserção de Fáculas
+    def addFacula(self, facula: Facula):
         '''
         Função onde são criadas as Fáculas da estrela. Todos os parâmetros 
         são relacionados ao tamanho da estrela, podendo o usuário escolher valores 
         ou selecionar a opção default.
         '''
-        if (facula.intensidade < 1) : 
+        if (facula.intensidade < 1):
             print("O valor da intensidade da Fácula deve ser maior que 1.")
-            return 
+            return
 
         self.faculas.append(facula)
-    
-    def criaEstrelaComFaculas(self): 
+
+    def criaEstrelaComFaculas(self):
         self.criaRuidos(self.faculas)
 
-  
-    ####### WIP: Inserção de flares
-    def flares(self): #recebe como parâmetro a estrela atualizada
+    # WIP: Inserção de flares
+    def flares(self):  # recebe como parâmetro a estrela atualizada
         '''
         Função onde são criadas os flares da estrela. Todos os parâmetros 
         são relacionados ao tamanhdo da estrela, podendo o usuário escolher valores 
@@ -211,19 +243,20 @@ class Estrela:
         :parâmetro 
         :parâmetro 
         :parâmetro
-        
+
         '''
 
-        #vai sobrescrever a estrela que ele está criando, sendo ela a estrela ou a estrelaManchada.
+        # vai sobrescrever a estrela que ele está criando, sendo ela a estrela ou a estrelaManchada.
         self.estrelaMatriz = self.estrelaMatriz
-        return self.estrelaMatriz #retorna a decisão: se há flare ou não 
+        return self.estrelaMatriz  # retorna a decisão: se há flare ou não
 
-    #### Getters
+    # Getters
     def getNx(self):
         '''
         Retorna parâmetro Nx, necessário para o Eclipse.
         '''
         return self.Nx
+
     def getNy(self):
         '''
         Retorna parâmetro Ny, necessário para o Eclipse.
@@ -236,6 +269,7 @@ class Estrela:
         relação ao raio da estrela.
         '''
         return self.raio
+
     def getMatrizEstrela(self):
         '''
         Retorna a estrela, plotada sem as manchas, necessário caso o usuário escolha a plotagem sem manchas.
@@ -244,13 +278,13 @@ class Estrela:
 
     def getu1(self):
         return self.coeficienteHum
-    
+
     def getu2(self):
         return self.coeficienteDois
 
     def getTamanhoMatriz(self):
         return self.tamanhoMatriz
-    
+
     def getRaioSun(self):
         return self.raioSun
 
@@ -263,32 +297,34 @@ class Estrela:
         o valor origem da variável (que é -1).
         '''
         return self.error
-    def setStarName(self,starName):
+
+    def setStarName(self, starName):
         self.starName = starName
 
     def getStarName(self):
         return self.starName
 
-    def setCadence(self,cadence):
+    def setCadence(self, cadence):
         self.cadence = cadence
 
     def getCadence(self):
         return self.cadence
 
-    def Plotar(self,tamanhoMatriz,estrela, invert_yaxis: bool = False):
+    def Plotar(self, tamanhoMatriz, estrela, invert_yaxis: bool = False):
         Nx = tamanhoMatriz
         Ny = tamanhoMatriz
-        plt.axis([0,Nx,0,Ny])
+        plt.axis([0, Nx, 0, Ny])
 
         # Criação do colormap
         cmap = plt.cm.get_cmap(self.color).copy()
         cmap.set_over('white')
 
         # Normalizar de 0 a intensidade máxima
-        norm = mcolors.Normalize(vmin=0, vmax=self.intensidadeMaxima*1.2, clip=False)
+        norm = mcolors.Normalize(
+            vmin=0, vmax=self.intensidadeMaxima*1.2, clip=False)
         plt.imshow(estrela, cmap=cmap, norm=norm)
-        
-        if invert_yaxis: 
+
+        if invert_yaxis:
             plt.gca().invert_yaxis()  # Corrige o eixo Y invertido
 
         plt.show()
