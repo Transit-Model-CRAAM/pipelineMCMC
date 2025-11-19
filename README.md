@@ -1,3 +1,9 @@
+# Base branch: ```main```
+>[!IMPORTANT]
+>```main``` represents more stable version of the code
+> 
+> For a better development experience, we recommend using [VSCode](https://code.visualstudio.com/download), with the extension for [jupyter notebook](https://marketplace.visualstudio.com/items?itemName=ms-toolsai.jupyter), [c and gcc](https://marketplace.visualstudio.com/items?itemName=ms-vscode.cpptools)
+
 # Pipeline MCMC
 
 [ 🇧🇷 ] Repositório com o projeto de programação para calcular a curva de luz de uma estrela com possíveis exoplanetas em sua órbita através de programação Python híbrida para programação C usando Pipeline em tempo de execução.
@@ -21,9 +27,13 @@ With Python installed in your machine, open the command prompt (cmd) and type th
 
 https://github.com/Transit-Model-CRAAM/pipelineMCMC/tree/feat/new-transit-method/Eclipse/scripts#readme
 
+Lembre-se de possuir instalado o ambiente para programação em C (C e gcc)
+
 [ 🇺🇸 ] To enable code parallelism (multithreading) in ECLIPSE, you must follow the tutorial available at:
 
 https://github.com/Transit-Model-CRAAM/pipelineMCMC/blob/feat/new-transit-method/Eclipse/scripts/README-EN.md
+
+Remember to have the C programming environment installed (C and gcc)
 
 *** 
 
@@ -36,7 +46,6 @@ Caso a instalação dê algum problema, também é possível instalar individual
 [ 🇺🇸 ] To install all libraries at once, open cmd inside the folder where files were extracted and type in the command ``` pip install -r requirements.txt --user ```.
 
 In case the installation goes wrong, it's also possible to install each library individually using the commands below.
-
 
 
 MatPlotLib:  ``` pip install matplotlib ```
@@ -68,13 +77,13 @@ Kepler.py: ``` pip install kepler.py ```
 *** 
 ## How to run
 
-[ 🇧🇷 ] Para o uso da versão main.ipynb, recomenda-se o uso do Jupyter Notebook. Para instalá-lo, basta digitar no prompt de comando o seguinte comando:
+[ 🇧🇷 ] Para o uso da versão main.ipynb, recomenda-se o uso do ```Jupyter Notebook```. Para instalá-lo, basta digitar no prompt de comando o seguinte comando:
 
 ``` pip install notebook ```
 
 Para utilizá-lo, basta ir até a pasta onde está instalado o programa e digitar no clipboard "jupyter notebook".
 
-[ 🇺🇸 ] To use the main.ipynb version, it is recommended using the Jupyter Notebook. To install it, just type in the command prompt the following command:
+[ 🇺🇸 ] To use the main.ipynb version, it is recommended using the ```Jupyter Notebook```. To install it, just type in the command prompt the following command:
 
 ``` pip install notebook ```
 
@@ -93,13 +102,6 @@ To use it, go to the folder where the software is installed and type in the clip
          </sub>
        </a>
      </td>
-  </tr>
-  </table>
- 
- ## Co - authors
-
- <table>
-   <tr>
      <td align="center">
        <a href="https://github.com/felipexpinho">
          <img src="https://avatars.githubusercontent.com/u/70541163?v=4" height="auto" width="100" style="corner-radius:50%" alt="Foto de perfil do GitHub do Pinho"/><br>
@@ -108,5 +110,5 @@ To use it, go to the folder where the software is installed and type in the clip
          </sub>
        </a>
      </td>
-    </tr>
- </table>
+  </tr>
+  </table>

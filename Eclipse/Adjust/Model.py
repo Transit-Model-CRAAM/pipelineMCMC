@@ -10,7 +10,7 @@ __status__ = "Production"
 #%matplotlib nbagg
 #%matplotlib inline
 
-from typing import List
+from typing import List, Optional
 import scipy
 from Planet.Planeta import Planeta
 from Star.Estrela import Estrela #estrela e eclipse:: extensões de programas auxiliares que realizam o cálculo da curva de luz.
@@ -99,7 +99,7 @@ class Modelo:
             print(f"Error: {e}")
             return None
         
-    def get_transit_parameters(self):
+    def get_transit_parameters(self, period: Optional[float], epoch: Optional[float], duration: Optional[float]):
         '''
         Função responsável por obter os parâmetros necessários para cortar os trânsitos:
 
@@ -107,6 +107,14 @@ class Modelo:
         Epoch: Época do primeiro trânsito em BJD
         Duration: Duração do trânsito em dias
         '''
+        # If all three variables aren't None, alocate them
+        if isinstance(period, float) and isinstance(epoch, float) and isinstance(duration, float):
+            self.period = period
+            self.epoch = epoch
+            self.duration = duration
+
+            return self.period, self.epoch, self.duration
+        
         # Access to ExoplanetArchive API
         service = pyvo.dal.TAPService("https://exoplanetarchive.ipac.caltech.edu/TAP")
 
@@ -120,19 +128,35 @@ class Modelo:
         if len(results) == 0:
             return None
         
-        self.period = results[0].get("pl_orbper")         # dias
-        self.epoch = results[0].get("pl_tranmid")         # BJD
-        self.duration = results[0].get("pl_trandur")/24   # dias
+        if isinstance(period, float):
+            self.period = period
+        else:
+            self.period = results[0].get("pl_orbper")         # dias
+
+        if isinstance(epoch, float):
+            self.epoch = epoch
+        else:
+            self.epoch = results[0].get("pl_tranmid")         # BJD
+            
+        if isinstance(duration, float):
+            self.duration = duration
+        else:
+            self.duration = results[0].get("pl_trandur")/24   # dias
 
         return self.period, self.epoch, self.duration
 
-    def get_transits(self):
+    def get_transits(self, period=None, epoch=None, duration=None):
         '''
         Função responsável por dividir os trânsitos.
 
         Retorna uma lista dos trânsitos divididos.
         '''
-        self.get_transit_parameters()
+        ack = self.get_transit_parameters(period, epoch, duration)
+
+        if ack is None:
+            raise ConnectionError(
+                "Couldn't download the data, please provide period, epoch and duration directly through function parameters."
+            )
 
         end_time = 0
         nn = 0

@@ -9,6 +9,12 @@ import numpy
 class Ajuste:
     
     def __init__(self,tratamento, time, flux, nwalkers, niter, burnin, rsun = 1, periodo = 1):
+        """
+        Attributes
+        ----------
+        gc_trigger_counter : int
+            Contador de iterações usado para verificar quando chamar o garbage collector.
+        """
         self.tratamento = tratamento
 
         self.u1_p0 = self.tratamento.u1
@@ -36,6 +42,8 @@ class Ajuste:
 
         self.p0 = [numpy.array(self.initial) + variations * numpy.random.randn(self.ndim) for i in range(self.nwalkers)]
 
+        self.gc_trigger_counter = 0
+
     #--------------------------------------------------#
     #----------------------MCMC------------------------#
     #--------------------------------------------------#
@@ -56,9 +64,21 @@ class Ajuste:
         eclipse = Eclipse(Nx,Ny,raioEstrelaPixel,estrela_, planeta_)
         
         eclipse.setTempoHoras(1.)
-        eclipse.criarEclipse(anim = False, plot= False)
-        lc0 = numpy.array(eclipse.getCurvaLuz()) 
-        ts0 = numpy.array(eclipse.getTempoHoras()) 
+
+        self.gc_trigger_counter += 1
+        # Coleta o lixo apenas a cada ciclo rodado 
+        # O garbage collector custa cerca de 0.08 segundo pra rodar, o que é pouco se você rodar apenas uma vez,
+        # mas como o MCMC pode rodar milhares de iterações, pode acabar aumentando bastante o custo de execução.
+        if self.gc_trigger_counter % self.niter == 0:
+            eclipse.criarEclipse(anim = False, plot= False)
+        else:
+            eclipse.criarEclipse(anim = False, plot= False, collect_garbage=False)
+
+        lc0 = numpy.array(eclipse.getCurvaLuz(), copy=True) 
+        ts0 = numpy.array(eclipse.getTempoHoras(), copy=True) 
+
+        del eclipse, planeta_, estrela_
+
         return interpolate.interp1d(ts0,lc0,fill_value="extrapolate")(time)
         
     #--------------------------------------------------#
@@ -67,9 +87,14 @@ class Ajuste:
     #--------------------------------------------------#
     def lnprior(self, theta):
         u1, u2, semiEixoUA, anguloInclinacao, rp = theta
-        if 0.0 < u1 < 1.0 and 0.0 < u2 < 1.0 and 0.001 < semiEixoUA < 1 and 80. < anguloInclinacao < 90 and 0.01 < rp < 5:
-            return 0.0
+        if u1 > 0.0:
+            if u1 + 2*u2 > 0.0 and u1 + u2 < 1 and 0.001 < semiEixoUA < 1 and 80. < anguloInclinacao < 90 and 0.01 < rp < 5:
+                return 0.0
+        elif u1 < 0.0:
+            if u1 + 2*u2 < 0.0 and u1 + u2 > -1 and 0.001 < semiEixoUA < 1 and 80. < anguloInclinacao < 90 and 0.01 < rp < 5:
+                return 0.0
         return -numpy.inf
+
     #--------------------------------------------------#
     def lnprob(self, theta, time, flux, flux_err):
         lp = self.lnprior(theta)
@@ -92,6 +117,12 @@ class Ajuste:
 
 class AjusteManchado: 
     def __init__(self,tratamento, time, flux, nwalkers, niter, burnin, ndim, eclipse: Eclipse, rsun = 1, periodo = 1):
+        """
+        Attributes
+        ----------
+        gc_trigger_counter : int
+            Contador de iterações usado para verificar quando chamar o garbage collector.
+        """
         
         self.manchas: Estrela.Mancha = eclipse.estrela_.manchas
 
@@ -134,6 +165,8 @@ class AjusteManchado:
         self.p0 = [numpy.array(self.initial) + ndim_variations * numpy.random.randn(self.ndim) for i in range(self.nwalkers)]
         self.tratamento = tratamento
 
+        self.gc_trigger_counter = 0
+
     #--------------------------------------------------#
     #----------------------MCMC------------------------#
     #--------------------------------------------------#
@@ -164,10 +197,21 @@ class AjusteManchado:
         eclipse = Eclipse(Nx,Ny,raioEstrelaPixel,estrela_, planeta_)
 
         eclipse.setTempoHoras(1.)
-        eclipse.criarEclipse(anim = False, plot= False)
+
+        self.gc_trigger_counter += 1
+        # Coleta o lixo apenas a cada ciclo rodado 
+        # O garbage collector custa cerca de 0.08 segundo pra rodar, o que é pouco se você rodar apenas uma vez,
+        # mas como o MCMC pode rodar milhares de iterações, pode acabar aumentando bastante o custo de execução.
+        if self.gc_trigger_counter % self.niter == 0:
+            eclipse.criarEclipse(anim = False, plot= False)
+        else:
+            eclipse.criarEclipse(anim = False, plot= False, collect_garbage=False)
         
         lc0 = numpy.array(eclipse.getCurvaLuz())
         ts0 = numpy.array(eclipse.getTempoHoras()) 
+        
+        del eclipse, planeta_, estrela_
+
         return interpolate.interp1d(ts0,lc0,fill_value="extrapolate")(time)
     #--------------------------------------------------#
     def lnlike(self, theta, time, flux, flux_err):
