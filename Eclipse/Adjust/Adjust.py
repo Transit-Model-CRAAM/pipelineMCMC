@@ -87,9 +87,14 @@ class Ajuste:
     #--------------------------------------------------#
     def lnprior(self, theta):
         u1, u2, semiEixoUA, anguloInclinacao, rp = theta
-        if 0.0 < u1 < 1.0 and 0.0 < u2 < 1.0 and 0.001 < semiEixoUA < 1 and 80. < anguloInclinacao < 90 and 0.01 < rp < 5:
-            return 0.0
+        if u1 > 0.0:
+            if u1 + 2*u2 > 0.0 and u1 + u2 < 1 and 0.001 < semiEixoUA < 1 and 80. < anguloInclinacao < 90 and 0.01 < rp < 5:
+                return 0.0
+        elif u1 < 0.0:
+            if u1 + 2*u2 < 0.0 and u1 + u2 > -1 and 0.001 < semiEixoUA < 1 and 80. < anguloInclinacao < 90 and 0.01 < rp < 5:
+                return 0.0
         return -numpy.inf
+
     #--------------------------------------------------#
     def lnprob(self, theta, time, flux, flux_err):
         lp = self.lnprior(theta)
