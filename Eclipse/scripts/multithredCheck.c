@@ -1,3 +1,6 @@
+/* SPDX-License-Identifier: GPL-3.0-or-later
+ * Copyright (C) 2020-2026 The ECLIPSE authors (CRAAM, Universidade Presbiteriana Mackenzie)
+ */
 /**
  * @file multithreadCheck.c
  * @brief Simple program to verify OpenMP functionality

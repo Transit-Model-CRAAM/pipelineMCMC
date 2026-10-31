@@ -103,6 +103,68 @@ Para utilizá-lo, basta ir até a pasta onde está instalado o programa e digita
 To use it, go to the folder where the software is installed and type in the clipboard "jupyter notebook".
 
 ***
+## How to cite
+
+[ 🇧🇷 ] Este código é aberto e pode ser usado livremente nos termos da licença (veja [License](#license)). Se ele contribuir para um trabalho acadêmico, pedimos que cite **as três referências abaixo**: o próprio código, o artigo que apresentou o modelo de trânsito original e o artigo que apresenta a implementação em Python. No GitHub, o botão **"Cite this repository"** (gerado a partir do arquivo [`CITATION.cff`](CITATION.cff)) fornece a citação do código em APA e BibTeX.
+
+[ 🇺🇸 ] This code is open and may be freely used under the terms of the license (see [License](#license)). If it contributes to academic work, please cite **the three references below**: the code itself, the paper that introduced the original transit model, and the paper that presents the Python implementation. On GitHub, the **"Cite this repository"** button (generated from the [`CITATION.cff`](CITATION.cff) file) provides the code citation in APA and BibTeX.
+
+1. Duque Estrada, B., Pinho, F., & Valio, A. **pipelineMCMC** [Computer software]. https://github.com/Transit-Model-CRAAM/pipelineMCMC
+2. Silva, A. V. R. (2003). **Method for Spot Detection on Solar-like Stars**. *The Astrophysical Journal*, 585(2), L147–L150. [doi:10.1086/374324](https://doi.org/10.1086/374324)
+3. Duque Estrada, B., Pinho, F., & Valio, A. (2025). **Simulations of stellar activity in Python and its impacts on the star's light curve**. *Proceedings of the International Astronomical Union*, 21(S400), 188–191. [doi:10.1017/S1743921326107170](https://doi.org/10.1017/S1743921326107170)
+
+[ 🇧🇷 ] Em trabalhos em português ou publicados no Brasil, sugerimos citar também o artigo abaixo, que apresenta o código em português com um estudo aplicado:
+
+[ 🇺🇸 ] For works in Portuguese or published in Brazil, we suggest also citing the paper below, which presents the code in Portuguese with an applied case study:
+
+- Duque Estrada, B., Pinho, F., & Valio, A. (2026). **Modelagem em Python do trânsito de um planeta em frente a uma estrela com manchas: um estudo aplicado a KEPLER-423**. *Revista Brasileira de Ensino de Física*, 48, e20250333. [doi:10.1590/1806-9126-RBEF-2025-0333](https://doi.org/10.1590/1806-9126-RBEF-2025-0333)
+
+<details>
+<summary>BibTeX</summary>
+
+```bibtex
+@software{DuqueEstrada_pipelineMCMC,
+  author = {Duque Estrada, Beatriz and Pinho, Felipe and Valio, Adriana},
+  title  = {pipelineMCMC},
+  url    = {https://github.com/Transit-Model-CRAAM/pipelineMCMC}
+}
+
+@article{Silva2003,
+  author  = {Silva, Adriana V. R.},
+  title   = {Method for Spot Detection on Solar-like Stars},
+  journal = {The Astrophysical Journal},
+  year    = {2003},
+  volume  = {585},
+  number  = {2},
+  pages   = {L147--L150},
+  doi     = {10.1086/374324}
+}
+
+@article{DuqueEstrada2025,
+  author  = {Duque Estrada, Beatriz and Pinho, Felipe and Valio, Adriana},
+  title   = {Simulations of stellar activity in Python and its impacts on the star's light curve},
+  journal = {Proceedings of the International Astronomical Union},
+  year    = {2025},
+  volume  = {21},
+  number  = {S400},
+  pages   = {188--191},
+  doi     = {10.1017/S1743921326107170}
+}
+
+@article{DuqueEstrada2026,
+  author  = {Duque Estrada, Beatriz and Pinho, Felipe and Valio, Adriana},
+  title   = {Modelagem em {Python} do tr{\^a}nsito de um planeta em frente a uma estrela com manchas: um estudo aplicado a {KEPLER-423}},
+  journal = {Revista Brasileira de Ensino de F{\'\i}sica},
+  year    = {2026},
+  volume  = {48},
+  pages   = {e20250333},
+  doi     = {10.1590/1806-9126-RBEF-2025-0333}
+}
+```
+
+</details>
+
+***
 ## Publications
 
 [ 🇧🇷 ] Artigos produzidos com o uso deste código:
@@ -170,3 +232,16 @@ To use it, go to the folder where the software is installed and type in the clip
      </td>
   </tr>
   </table>
+
+***
+## License
+
+Copyright (C) 2020-2026 The ECLIPSE authors (CRAAM, Universidade Presbiteriana Mackenzie).
+
+[ 🇧🇷 ] "The ECLIPSE authors" são as pessoas listadas em [Authors](#authors) e nos cabeçalhos dos arquivos de código. O modelo de trânsito original é de Adriana Valio ([Silva 2003](https://doi.org/10.1086/374324)). O ajuste por MCMC é de autoria de Beatriz Duque e Felipe Pinho, a partir de uma implementação inicial de Yuri Neto.
+
+[ 🇺🇸 ] "The ECLIPSE authors" are the people listed under [Authors](#authors) and in the headers of the source files. The original transit model is by Adriana Valio ([Silva 2003](https://doi.org/10.1086/374324)). The MCMC fitting is authored by Beatriz Duque and Felipe Pinho, building on an initial implementation by Yuri Neto.
+
+[ 🇧🇷 ] Este programa é software livre, distribuído sob a **GNU General Public License v3.0 ou posterior** (`GPL-3.0-or-later`); veja o arquivo [`LICENSE`](LICENSE). Em resumo: você pode usar, estudar, modificar e redistribuir o código, desde que (1) mantenha os avisos de copyright e de autoria, (2) indique claramente o que foi modificado e (3) distribua versões modificadas também sob a GPL v3, com o código-fonte aberto. Partes de `Eclipse/Misc/keplerAux.py` são adaptadas do [RadVel](https://github.com/California-Planet-Search/radvel) (licença MIT; o aviso está no próprio arquivo).
+
+[ 🇺🇸 ] This program is free software, distributed under the **GNU General Public License v3.0 or later** (`GPL-3.0-or-later`); see the [`LICENSE`](LICENSE) file. In short: you may use, study, modify and redistribute the code, provided that you (1) keep the copyright and authorship notices, (2) clearly state what was modified, and (3) distribute modified versions under the GPL v3 as well, with the source code available. Parts of `Eclipse/Misc/keplerAux.py` are adapted from [RadVel](https://github.com/California-Planet-Search/radvel) (MIT License; the notice is in the file itself).

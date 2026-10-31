@@ -1,7 +1,7 @@
-__author__ = "Yuri Neto, Felipe Pinho, Beatriz Duque, Adriana Valio (Orientadora)"
-__copyright__ = "..."
-__credits__ = ["Universidade Presbiteriana Mackenzie, CRAAM"]
-__license__ = ""
+__author__ = "Beatriz Duque, Felipe Pinho"
+__copyright__ = "Copyright (C) 2020-2026 Beatriz Duque Estrada, Felipe Pinho (CRAAM, Universidade Presbiteriana Mackenzie)"
+__credits__ = ["Universidade Presbiteriana Mackenzie, CRAAM", "Adriana Valio (orientadora/advisor)", "Yuri Neto (implementação inicial do ajuste MCMC/initial MCMC implementation)"]
+__license__ = "GPL-3.0-or-later"
 __version__ = ""
 __maintainer__ = ""
 __email__ = "starsandexoplanets@gmail.com"
