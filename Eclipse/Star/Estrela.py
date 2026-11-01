@@ -1,7 +1,7 @@
 __author__ = "Adriana Valio, Beatriz Duque, Felipe Pereira Pinho"
-__copyright__ = "..."
+__copyright__ = "Copyright (C) 2020-2026 The ECLIPSE authors (CRAAM, Universidade Presbiteriana Mackenzie)"
 __credits__ = ["Universidade Presbiteriana Mackenzie, CRAAM"]
-__license__ = ""
+__license__ = "GPL-3.0-or-later"
 __version__ = ""
 __maintainer__ = ""
 __email__ = "biaduque7@hotmail.com"

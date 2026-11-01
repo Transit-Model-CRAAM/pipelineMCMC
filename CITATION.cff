@@ -1,0 +1,73 @@
+cff-version: 1.2.0
+message: >-
+  If you use this software, please cite it as below, together with the
+  references listed in this file (Silva 2003, for the original transit model,
+  and Duque Estrada, Pinho & Valio 2025, for the Python implementation).
+  For works in Portuguese or published in Brazil, please also cite
+  Duque Estrada, Pinho & Valio 2026 (Revista Brasileira de Ensino de Fisica).
+title: "Pipeline MCMC: ECLIPSE planetary transit model with MCMC fitting"
+type: software
+authors:
+  - given-names: Beatriz
+    family-names: Duque Estrada
+    affiliation: "CRAAM, Universidade Presbiteriana Mackenzie"
+  - given-names: Felipe
+    family-names: Pinho
+    affiliation: "CRAAM, Universidade Presbiteriana Mackenzie"
+  - given-names: Adriana
+    family-names: Valio
+    affiliation: "CRAAM, Universidade Presbiteriana Mackenzie"
+repository-code: "https://github.com/Transit-Model-CRAAM/pipelineMCMC"
+license: GPL-3.0-or-later
+abstract: >-
+  Python/C code to compute the light curve of a star with transiting exoplanets, including starspots and faculae (ECLIPSE model), with parallelized MCMC fitting of the transit parameters.
+keywords:
+  - exoplanets
+  - planetary transits
+  - starspots
+  - stellar activity
+  - light curves
+  - MCMC
+references:
+  - type: article
+    authors:
+      - given-names: Adriana V. R.
+        family-names: Silva
+    title: "Method for Spot Detection on Solar-like Stars"
+    journal: "The Astrophysical Journal"
+    volume: 585
+    issue: 2
+    start: L147
+    end: L150
+    year: 2003
+    doi: 10.1086/374324
+  - type: article
+    authors:
+      - given-names: Beatriz
+        family-names: Duque Estrada
+      - given-names: Felipe
+        family-names: Pinho
+      - given-names: Adriana
+        family-names: Valio
+    title: "Simulations of stellar activity in Python and its impacts on the star's light curve"
+    journal: "Proceedings of the International Astronomical Union"
+    volume: 21
+    issue: S400
+    start: 188
+    end: 191
+    year: 2025
+    doi: 10.1017/S1743921326107170
+  - type: article
+    authors:
+      - given-names: Beatriz
+        family-names: Duque Estrada
+      - given-names: Felipe
+        family-names: Pinho
+      - given-names: Adriana
+        family-names: Valio
+    title: "Modelagem em Python do trânsito de um planeta em frente a uma estrela com manchas: um estudo aplicado a KEPLER-423"
+    journal: "Revista Brasileira de Ensino de Física"
+    volume: 48
+    start: e20250333
+    year: 2026
+    doi: 10.1590/1806-9126-RBEF-2025-0333

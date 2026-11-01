@@ -1,4 +1,6 @@
 __author__ = "Beatriz Duque, Felipe Pereira Pinho"
+__copyright__ = "Copyright (C) 2020-2026 The ECLIPSE authors (CRAAM, Universidade Presbiteriana Mackenzie)"
+__license__ = "GPL-3.0-or-later"
 
 '''
 Arquivo com funções auxiliares de cálculo e validação utilizadas no modelo de eclipse
